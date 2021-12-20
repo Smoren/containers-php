@@ -398,6 +398,10 @@ class MainTest extends Unit
 
         $this->assertCount(6, $ll);
         $this->assertEquals([-1, 0, 10, 36, 45, 150], $ll->toArray());
+
+        $ll->clear();
+        $this->assertCount(0, $ll);
+        $this->assertEquals([], $ll->toArray());
     }
 
     /**
