@@ -5,8 +5,10 @@ namespace Smoren\Structs\tests\unit;
 
 use Codeception\Lib\Console\Output;
 use Codeception\Test\Unit;
+use Exception;
 use Smoren\Structs\exceptions\LinkedListException;
 use Smoren\Structs\exceptions\MappedCollectionException;
+use Smoren\Structs\exceptions\MappedLinkedListException;
 use Smoren\Structs\structs\LinkedList;
 use Smoren\Structs\structs\LinkedListItem;
 use Smoren\Structs\structs\MappedCollection;
@@ -91,7 +93,7 @@ class MainTest extends Unit
 
     /**
      * @throws LinkedListException
-     * @throws \Exception
+     * @throws Exception
      */
     public function testLinkedList()
     {
@@ -175,6 +177,11 @@ class MainTest extends Unit
         $this->assertEquals(3, $ll->count());
     }
 
+    /**
+     * @throws LinkedListException
+     * @throws MappedCollectionException
+     * @throws MappedLinkedListException
+     */
     public function testMappedLinkedList()
     {
         $ll = new MappedLinkedList();
@@ -317,6 +324,80 @@ class MainTest extends Unit
         $this->assertEquals(3, $ll->count());
 
         // TODO try checks
+    }
+
+    /**
+     * @throws LinkedListException
+     * @throws Exception
+     */
+    public function testSortedLinkedList()
+    {
+        $ll = new IntegerSortedLinkedList([2, 5, 1]);
+        $this->assertCount(3, $ll);
+        $this->assertEquals([1, 2, 5], $ll->toArray());
+
+        $ll->insert(2);
+        $this->assertCount(4, $ll);
+        $this->assertEquals([1, 2, 2, 5], $ll->toArray());
+
+        $ll->insert(4);
+        $this->assertCount(5, $ll);
+        $this->assertEquals([1, 2, 2, 4, 5], $ll->toArray());
+
+        $ll->insert(6);
+        $this->assertCount(6, $ll);
+        $this->assertEquals([1, 2, 2, 4, 5, 6], $ll->toArray());
+
+        $ll->insert(0);
+        $this->assertCount(7, $ll);
+        $this->assertEquals([0, 1, 2, 2, 4, 5, 6], $ll->toArray());
+
+        $pos = $ll->insert(3);
+        $this->assertCount(8, $ll);
+        $this->assertEquals([0, 1, 2, 2, 3, 4, 5, 6], $ll->toArray());
+
+        $ll->pop($pos);
+        $this->assertCount(7, $ll);
+        $this->assertEquals([0, 1, 2, 2, 4, 5, 6], $ll->toArray());
+
+        $ll->popBack();
+        $this->assertCount(6, $ll);
+        $this->assertEquals([0, 1, 2, 2, 4, 5], $ll->toArray());
+
+        $ll->popFront();
+        $this->assertCount(5, $ll);
+        $this->assertEquals([1, 2, 2, 4, 5], $ll->toArray());
+
+        for($i=0; $i<5; ++$i) {
+            $ll->popBack();
+        }
+
+        $this->assertCount(0, $ll);
+        $this->assertEquals([], $ll->toArray());
+
+        try {
+            $ll->popBack();
+            $this->assertTrue(false);
+        } catch(LinkedListException $e) {
+            $this->assertEquals(LinkedListException::STATUS_EMPTY, $e->getCode());
+        }
+
+        try {
+            $ll->popFront();
+            $this->assertTrue(false);
+        } catch(LinkedListException $e) {
+            $this->assertEquals(LinkedListException::STATUS_EMPTY, $e->getCode());
+        }
+
+        $ll->insert(10);
+        $ll->insert(-1);
+        $ll->insert(150);
+        $ll->insert(45);
+        $ll->insert(36);
+        $ll->insert(0);
+
+        $this->assertCount(6, $ll);
+        $this->assertEquals([-1, 0, 10, 36, 45, 150], $ll->toArray());
     }
 
     /**

@@ -47,7 +47,9 @@ class MappedLinkedList implements IteratorAggregate, Countable
      * @param MappedCollection|null $positionMap
      * @throws MappedLinkedListException|MappedCollectionException
      */
-    public function __construct(array $inputMap = [], ?LinkedList $listObject = null, ?MappedCollection $positionMap = null)
+    public function __construct(
+        array $inputMap = [], ?LinkedList $listObject = null, ?MappedCollection $positionMap = null
+    )
     {
         $this->list = $listObject ?? new LinkedList();
         $this->positionMap = $positionMap ?? new MappedCollection();
@@ -310,7 +312,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
      * @inheritDoc
      * @return MappedLinkedListIterator
      */
-    public function getIterator()
+    public function getIterator(): MappedLinkedListIterator
     {
         return new MappedLinkedListIterator($this);
     }
@@ -318,7 +320,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
         return $this->list->count();
     }

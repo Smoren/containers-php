@@ -154,7 +154,7 @@ class MappedCollection implements IteratorAggregate, Countable
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
         return count($this->itemsMap);
     }
@@ -199,7 +199,7 @@ class MappedCollection implements IteratorAggregate, Countable
     /**
      * @inheritDoc
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->itemsMap);
     }

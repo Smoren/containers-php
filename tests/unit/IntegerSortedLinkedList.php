@@ -8,9 +8,10 @@ use Smoren\Structs\structs\SortedLinkedList;
 
 class IntegerSortedLinkedList extends SortedLinkedList
 {
-
     protected function getComparator(): callable
     {
-        // TODO: Implement getComparator() method.
+        return function(int $lhs, int $rhs) {
+            return $lhs > $rhs;
+        };
     }
 }

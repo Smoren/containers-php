@@ -354,7 +354,7 @@ class LinkedList implements IteratorAggregate, Countable
      * Returns list iterator
      * @return LinkedListIterator
      */
-    public function getIterator()
+    public function getIterator(): LinkedListIterator
     {
         return new LinkedListIterator($this);
     }
@@ -363,7 +363,7 @@ class LinkedList implements IteratorAggregate, Countable
      * Returns list size
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->length;
     }

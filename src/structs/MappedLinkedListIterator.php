@@ -40,7 +40,7 @@ class MappedLinkedListIterator implements Iterator
     /**
      * @inheritDoc
      */
-    public function next()
+    public function next(): void
     {
         $this->position = $this->position->getNext();
     }
@@ -48,7 +48,7 @@ class MappedLinkedListIterator implements Iterator
     /**
      * @inheritDoc
      */
-    public function key()
+    public function key(): string
     {
         return $this->position->getExtra();
     }
@@ -56,7 +56,7 @@ class MappedLinkedListIterator implements Iterator
     /**
      * @inheritDoc
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->position !== null;
     }
@@ -64,7 +64,7 @@ class MappedLinkedListIterator implements Iterator
     /**
      * @inheritDoc
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = $this->owner->getList()->getFirst();
     }

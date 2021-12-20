@@ -40,15 +40,16 @@ class LinkedListIterator implements Iterator
     /**
      * @inheritDoc
      */
-    public function next()
+    public function next(): void
     {
         $this->position = $this->position->getNext();
     }
 
     /**
      * @inheritDoc
+     * @return LinkedListItem
      */
-    public function key()
+    public function key(): LinkedListItem
     {
         return $this->position;
     }
@@ -56,7 +57,7 @@ class LinkedListIterator implements Iterator
     /**
      * @inheritDoc
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->position !== null;
     }
@@ -64,7 +65,7 @@ class LinkedListIterator implements Iterator
     /**
      * @inheritDoc
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = $this->owner->getFirst();
     }
