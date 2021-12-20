@@ -6,6 +6,10 @@ namespace Smoren\Structs\exceptions;
 
 use Smoren\ExtendedExceptions\BadDataException;
 
+/**
+ * Class LinkedListException
+ * @package Smoren\Structs\exceptions
+ */
 class LinkedListException extends BadDataException
 {
     const STATUS_EMPTY = 1;

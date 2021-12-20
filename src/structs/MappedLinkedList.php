@@ -97,17 +97,21 @@ class MappedLinkedList implements IteratorAggregate, Countable
 
     /**
      * Pushes new element to after target element position
-     * @param string $idAfter element ID
+     * @param string|null $idAfter element ID
      * @param string $id new element ID
      * @param mixed $data data value of new element
      * @return LinkedListItem
      * @throws MappedLinkedListException|MappedCollectionException
      */
-    public function pushAfter(string $idAfter, string $id, $data): LinkedListItem
+    public function pushAfter(?string $idAfter, string $id, $data): LinkedListItem
     {
-        $this->checkExist($idAfter);
+        if($idAfter !== null) {
+            $this->checkExist($idAfter);
+            $position = $this->positionMap->get($idAfter);
+        } else {
+            $position = null;
+        }
         $this->checkNotExist($id);
-        $position = $this->positionMap->get($idAfter);
         $newPosition = $this->list->pushAfter($position, $data);
         $newPosition->setExtra($id);
         $this->positionMap->add($id, $newPosition);
@@ -117,17 +121,21 @@ class MappedLinkedList implements IteratorAggregate, Countable
 
     /**
      * Pushes new element to before target element position
-     * @param string $idBefore element ID
+     * @param string|null $idBefore element ID
      * @param string $id new element ID
      * @param mixed $data data value of new element
      * @return LinkedListItem
      * @throws MappedLinkedListException|MappedCollectionException
      */
-    public function pushBefore(string $idBefore, string $id, $data): LinkedListItem
+    public function pushBefore(?string $idBefore, string $id, $data): LinkedListItem
     {
-        $this->checkExist($idBefore);
+        if($idBefore !== null) {
+            $this->checkExist($idBefore);
+            $position = $this->positionMap->get($idBefore);
+        } else {
+            $position = null;
+        }
         $this->checkNotExist($id);
-        $position = $this->positionMap->get($idBefore);
         $newPosition = $this->list->pushBefore($position, $data);
         $newPosition->setExtra($id);
         $this->positionMap->add($id, $newPosition);
@@ -278,7 +286,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
     {
         if($this->exist($id)) {
             throw new MappedLinkedListException(
-                "ID '{$id}' exists", MappedLinkedListException::STATUS_ID_NOT_EXIST
+                "ID '{$id}' exists", MappedLinkedListException::STATUS_ID_EXIST
             );
         }
         return $this;

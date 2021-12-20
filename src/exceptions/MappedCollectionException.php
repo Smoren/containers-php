@@ -6,6 +6,9 @@ namespace Smoren\Structs\exceptions;
 
 use Smoren\ExtendedExceptions\BadDataException;
 
+/**
+ * Class MappedCollectionException
+ */
 class MappedCollectionException extends BadDataException
 {
     const STATUS_ID_EXIST = 1;

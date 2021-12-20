@@ -13,6 +13,8 @@ use Smoren\Structs\structs\LinkedList;
 use Smoren\Structs\structs\LinkedListItem;
 use Smoren\Structs\structs\MappedCollection;
 use Smoren\Structs\structs\MappedLinkedList;
+use Smoren\Structs\tests\unit\utility\ArrayMappedSortedLinkedList;
+use Smoren\Structs\tests\unit\utility\IntegerSortedLinkedList;
 
 class MainTest extends Unit
 {
@@ -405,10 +407,123 @@ class MainTest extends Unit
     }
 
     /**
+     * @throws LinkedListException
+     * @throws Exception
+     */
+    public function testMappedSortedLinkedList()
+    {
+        $ll = new ArrayMappedSortedLinkedList([
+            5 => ['id' => 5],
+            1 => ['id' => 1],
+            2 => ['id' => 2],
+        ]);
+        $this->assertCount(3, $ll);
+        $this->assertEquals([1, 2, 5], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([1, 2, 5], array_keys($ll->toArray()));
+
+        try {
+            $ll->insert(2, ['id' => 2]);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_EXIST, $e->getCode());
+        }
+        $this->assertCount(3, $ll);
+        $this->assertEquals([1, 2, 5], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([1, 2, 5], array_keys($ll->toArray()));
+
+        $ll->insert(4, ['id' => 4]);
+        $this->assertCount(4, $ll);
+        $this->assertEquals([1, 2, 4, 5], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([1, 2, 4, 5], array_keys($ll->toArray()));
+
+        $ll->insert(6, ['id' => 6]);
+        $this->assertCount(5, $ll);
+        $this->assertEquals([1, 2, 4, 5, 6], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([1, 2, 4, 5, 6], array_keys($ll->toArray()));
+
+        $ll->insert(0, ['id' => 0]);
+        $this->assertCount(6, $ll);
+        $this->assertEquals([0, 1, 2, 4, 5, 6], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([0, 1, 2, 4, 5, 6], array_keys($ll->toArray()));
+
+        $ll->insert(3, ['id' => 3]);
+        $this->assertCount(7, $ll);
+        $this->assertEquals([0, 1, 2, 3, 4, 5, 6], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([0, 1, 2, 3, 4, 5, 6], array_keys($ll->toArray()));
+
+        $ll->pop(3);
+        $this->assertCount(6, $ll);
+        $this->assertEquals([0, 1, 2, 4, 5, 6], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([0, 1, 2, 4, 5, 6], array_keys($ll->toArray()));
+
+        $ll->popBack();
+        $this->assertCount(5, $ll);
+        $this->assertEquals([0, 1, 2, 4, 5], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([0, 1, 2, 4, 5], array_keys($ll->toArray()));
+
+        $ll->popFront();
+        $this->assertCount(4, $ll);
+        $this->assertEquals([1, 2, 4, 5], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([1, 2, 4, 5], array_keys($ll->toArray()));
+
+        for($i=0; $i<4; ++$i) {
+            $ll->popBack();
+        }
+
+        $this->assertCount(0, $ll);
+        $this->assertEquals([], $ll->toArray());
+
+        try {
+            $ll->popBack();
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_EMPTY, $e->getCode());
+        }
+
+        try {
+            $ll->popFront();
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_EMPTY, $e->getCode());
+        }
+
+        $ll->insert(10, ['id' => 10]);
+        $ll->insert(-1, ['id' => -1]);
+        $ll->insert(150, ['id' => 150]);
+        $ll->insert(45, ['id' => 45]);
+        $ll->insert(36, ['id' => 36]);
+        $ll->insert(0, ['id' => 0]);
+
+        $this->assertCount(6, $ll);
+        $this->assertEquals([-1, 0, 10, 36, 45, 150], $this->getColumn($ll->toArray(), 'id'));
+        $this->assertEquals([-1, 0, 10, 36, 45, 150], array_keys($ll->toArray()));
+
+        $ll->clear();
+        $this->assertCount(0, $ll);
+        $this->assertEquals([], $ll->toArray());
+    }
+
+    /**
+     * @param array $source
+     * @param string $columnName
+     * @return array
+     */
+    protected function getColumn(array $source, string $columnName): array
+    {
+        $result = [];
+
+        foreach($source as $val) {
+            $result[] = $val[$columnName];
+        }
+
+        return $result;
+    }
+
+    /**
      * Debug print method
      * @param mixed $log
      */
-    public function log($log)
+    protected function log($log)
     {
         $output = new Output([]);
         $output->writeln(PHP_EOL);
