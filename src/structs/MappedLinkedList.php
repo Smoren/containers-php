@@ -1,0 +1,325 @@
+<?php
+
+
+namespace Smoren\Structs\structs;
+
+use Countable;
+use Exception;
+use IteratorAggregate;
+use Smoren\Structs\exceptions\LinkedListException;
+use Smoren\Structs\exceptions\MappedCollectionException;
+use Smoren\Structs\exceptions\MappedLinkedListException;
+
+class MappedLinkedList implements IteratorAggregate, Countable
+{
+    /**
+     * @var LinkedList
+     */
+    protected LinkedList $list;
+    /**
+     * @var MappedCollection
+     */
+    protected MappedCollection $positionMap;
+
+    /**
+     * Create new list by merging several another lists
+     * @param MappedLinkedList ...$lists
+     * @return MappedLinkedList
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public static function merge(MappedLinkedList ...$lists): MappedLinkedList
+    {
+        $result = new MappedLinkedList();
+
+        foreach($lists as $list) {
+            foreach($list as $id => $value) {
+                $result->pushBack($id, $value);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * MappedLinkedList constructor.
+     * @param array $inputMap
+     * @param LinkedList|null $listObject
+     * @param MappedCollection|null $positionMap
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function __construct(array $inputMap = [], ?LinkedList $listObject = null, ?MappedCollection $positionMap = null)
+    {
+        $this->list = $listObject ?? new LinkedList();
+        $this->positionMap = $positionMap ?? new MappedCollection();
+
+        foreach($inputMap as $id => $value) {
+            $this->pushBack($id, $value);
+        }
+    }
+
+    /**
+     * Pushes element to front of list
+     * @param string $id element ID
+     * @param mixed $data data value of element
+     * @return LinkedListItem
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function pushFront(string $id, $data): LinkedListItem
+    {
+        $this->checkNotExist($id);
+
+        $position = $this->list->pushFront($data);
+        $position->setExtra($id);
+        $this->positionMap->add($id, $position);
+
+        return $position;
+    }
+
+    /**
+     * Pushes element to back of list
+     * @param string $id element ID
+     * @param mixed $data data value of element
+     * @return LinkedListItem
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function pushBack(string $id, $data): LinkedListItem
+    {
+        $this->checkNotExist($id);
+
+        $position = $this->list->pushBack($data);
+        $position->setExtra($id);
+        $this->positionMap->add($id, $position);
+
+        return $position;
+    }
+
+    /**
+     * Pushes new element to after target element position
+     * @param string $idAfter element ID
+     * @param string $id new element ID
+     * @param mixed $data data value of new element
+     * @return LinkedListItem
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function pushAfter(string $idAfter, string $id, $data): LinkedListItem
+    {
+        $this->checkExist($idAfter);
+        $this->checkNotExist($id);
+        $position = $this->positionMap->get($idAfter);
+        $newPosition = $this->list->pushAfter($position, $data);
+        $newPosition->setExtra($id);
+        $this->positionMap->add($id, $newPosition);
+
+        return $newPosition;
+    }
+
+    /**
+     * Pushes new element to before target element position
+     * @param string $idBefore element ID
+     * @param string $id new element ID
+     * @param mixed $data data value of new element
+     * @return LinkedListItem
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function pushBefore(string $idBefore, string $id, $data): LinkedListItem
+    {
+        $this->checkExist($idBefore);
+        $this->checkNotExist($id);
+        $position = $this->positionMap->get($idBefore);
+        $newPosition = $this->list->pushBefore($position, $data);
+        $newPosition->setExtra($id);
+        $this->positionMap->add($id, $newPosition);
+
+        return $newPosition;
+    }
+
+    /**
+     * Removes element from the front of list
+     * @return array [id, value]
+     * @throws MappedLinkedListException|LinkedListException|MappedCollectionException
+     */
+    public function popFront(): array
+    {
+        $this->checkNotEmpty();
+
+        $position = $this->list->popFrontPosition();
+        $id = $position->getExtra();
+        $this->positionMap->delete($id);
+
+        return [$id, $position->getData()];
+    }
+
+    /**
+     * Removes element from the back of list
+     * @return array [id, value]
+     * @throws MappedLinkedListException|LinkedListException|MappedCollectionException
+     */
+    public function popBack(): array
+    {
+        $this->checkNotEmpty();
+
+        $position = $this->list->popBackPosition();
+        $id = $position->getExtra();
+        $this->positionMap->delete($id);
+
+        return [$id, $position->getData()];
+    }
+
+    /**
+     * Removes element from target element position
+     * @param string $id element ID
+     * @return LinkedListItem old position of element
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function pop(string $id): LinkedListItem
+    {
+        $this->checkExist($id);
+
+        $position = $this->positionMap->get($id);
+        $this->positionMap->delete($id);
+
+        return $this->list->pop($position);
+    }
+
+    /**
+     * Swaps two elements
+     * @param string $lhsId first element ID
+     * @param string $rhsId second element ID
+     * @return $this
+     * @throws MappedCollectionException|MappedLinkedListException
+     */
+    public function swap(string $lhsId, string $rhsId): self
+    {
+        $this->checkExist($lhsId);
+        $this->checkExist($rhsId);
+
+        $this->list->swap($this->positionMap->get($lhsId), $this->positionMap->get($rhsId));
+
+        return $this;
+    }
+
+    /**
+     * Clears collection
+     * @return $this
+     */
+    public function clear(): self
+    {
+        $this->list->clear();
+        $this->positionMap->clear();
+        return $this;
+    }
+
+    /**
+     * Sorts element via comparator callback
+     * @param callable $comparator comparator callback
+     * @return $this
+     * @throws Exception
+     */
+    public function sort(callable $comparator): self
+    {
+        $this->list->sort($comparator);
+        return $this;
+    }
+
+    /**
+     * Converts list to array
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $result = [];
+
+        /**
+         * @var LinkedListItem $position
+         * @var mixed $value
+         */
+        foreach($this->list as $position => $value) {
+            $result[$position->getExtra()] = $value;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns true if element with such ID exists in collection
+     * @param string $id element ID
+     * @return bool
+     */
+    public function exist(string $id): bool
+    {
+        return $this->positionMap->exist($id);
+    }
+
+    /**
+     * Checks if element with such ID exists
+     * @param string $id element ID
+     * @return $this
+     * @throws MappedLinkedListException
+     */
+    public function checkExist(string $id): self
+    {
+        if(!$this->exist($id)) {
+            throw new MappedLinkedListException(
+                "ID '{$id}' not exists", MappedLinkedListException::STATUS_ID_NOT_EXIST
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * Checks if element with such ID not exists
+     * @param string $id element ID
+     * @return $this
+     * @throws MappedLinkedListException
+     */
+    public function checkNotExist(string $id): self
+    {
+        if($this->exist($id)) {
+            throw new MappedLinkedListException(
+                "ID '{$id}' exists", MappedLinkedListException::STATUS_ID_NOT_EXIST
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * Checks if collection is not empty
+     * @return $this
+     * @throws MappedLinkedListException
+     */
+    public function checkNotEmpty(): self
+    {
+        if(!$this->count()) {
+            throw new MappedLinkedListException(
+                "collection is empty", MappedLinkedListException::STATUS_EMPTY
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * Returns LinkedList object of collection
+     * @return LinkedList
+     */
+    public function getList(): LinkedList
+    {
+        return $this->list;
+    }
+
+    /**
+     * @inheritDoc
+     * @return MappedLinkedListIterator
+     */
+    public function getIterator()
+    {
+        return new MappedLinkedListIterator($this);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function count()
+    {
+        return $this->list->count();
+    }
+}

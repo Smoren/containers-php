@@ -1,0 +1,38 @@
+{
+  "name": "smoren/structs",
+  "description": "Abstract data structures for PHP",
+  "keywords": ["abstract", "structures", "collection", "list", "linked list"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Smoren",
+      "email": "ofigate@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-json": "*",
+    "smoren/extended-exceptions": "^1.0"
+  },
+  "require-dev": {
+    "codeception/codeception": "^4.0",
+    "codeception/module-asserts": "^1.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Smoren\\Structs\\": "src",
+      "Smoren\\Structs\\tests\\": "tests"
+    }
+  },
+  "config": {
+    "fxp-asset": {
+      "enabled": false
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ]
+}
