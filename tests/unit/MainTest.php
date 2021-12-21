@@ -13,7 +13,7 @@ use Smoren\Structs\structs\LinkedList;
 use Smoren\Structs\structs\LinkedListItem;
 use Smoren\Structs\structs\MappedCollection;
 use Smoren\Structs\structs\MappedLinkedList;
-use Smoren\Structs\tests\unit\utility\ArrayMappedSortedLinkedList;
+use Smoren\Structs\tests\unit\utility\ArraySortedMappedLinkedList;
 use Smoren\Structs\tests\unit\utility\IntegerSortedLinkedList;
 
 class MainTest extends Unit
@@ -412,7 +412,7 @@ class MainTest extends Unit
      */
     public function testMappedSortedLinkedList()
     {
-        $ll = new ArrayMappedSortedLinkedList([
+        $ll = new ArraySortedMappedLinkedList([
             5 => ['id' => 5],
             1 => ['id' => 1],
             2 => ['id' => 2],
@@ -625,7 +625,7 @@ class MainTest extends Unit
         /*
          * SortedMappedLinkedList
          */
-        $smll = new ArrayMappedSortedLinkedList(['a' => ['id' => 'a'], 'c' => ['id' => 'c']]);
+        $smll = new ArraySortedMappedLinkedList(['a' => ['id' => 'a'], 'c' => ['id' => 'c']]);
         $smllCopy = clone $smll;
 
         $this->assertTrue($smll->getList() !== $smllCopy->getList());
@@ -636,7 +636,7 @@ class MainTest extends Unit
         $this->assertEquals(['a' => ['id' => 'a'], 'b' => ['id' => 'b']], $smll->toArray());
         $this->assertEquals(['a' => ['id' => 'a'], 'c' => ['id' => 'c']], $smllCopy->toArray());
 
-        $smll = new ArrayMappedSortedLinkedList(['a' => ['id' => 'a'], 'c' => ['id' => 'c']]);
+        $smll = new ArraySortedMappedLinkedList(['a' => ['id' => 'a'], 'c' => ['id' => 'c']]);
         $smllCopy = clone $smll;
 
         $smllCopy->insert('b', ['id' => 'b']);

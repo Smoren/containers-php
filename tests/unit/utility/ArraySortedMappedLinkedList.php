@@ -9,7 +9,7 @@ use Smoren\Structs\structs\SortedMappedLinkedList;
 /**
  * Class ArrayMappedSortedLinkedList
  */
-class ArrayMappedSortedLinkedList extends SortedMappedLinkedList
+class ArraySortedMappedLinkedList extends SortedMappedLinkedList
 {
     /**
      * @inheritDoc
