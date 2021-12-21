@@ -1,7 +1,7 @@
 # Structs
 Abstract data structures for PHP
 
-### How to install to Yii2 project
+### How to install as dependency to your project
 ```
 composer require smoren/structs
 ```
