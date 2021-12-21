@@ -90,6 +90,15 @@ abstract class SortedMappedLinkedList implements IteratorAggregate, Countable
     }
 
     /**
+     * Returns source list
+     * @return MappedLinkedList
+     */
+    public function getList(): MappedLinkedList
+    {
+        return $this->list;
+    }
+
+    /**
      * Removes element from the front of list
      * @return array [id, value]
      * @throws MappedLinkedListException|MappedCollectionException|LinkedListException
@@ -152,5 +161,13 @@ abstract class SortedMappedLinkedList implements IteratorAggregate, Countable
         }
 
         return $position;
+    }
+
+    /**
+     * Clones object
+     */
+    public function __clone()
+    {
+        $this->list = clone $this->list;
     }
 }

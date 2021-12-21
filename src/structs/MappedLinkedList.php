@@ -19,7 +19,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
     /**
      * @var MappedCollection
      */
-    protected MappedCollection $positionMap;
+    protected MappedCollection $positionsMap;
 
     /**
      * Create new list by merging several another lists
@@ -52,7 +52,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
     )
     {
         $this->list = $listObject ?? new LinkedList();
-        $this->positionMap = $positionMap ?? new MappedCollection();
+        $this->positionsMap = $positionMap ?? new MappedCollection();
 
         foreach($inputMap as $id => $value) {
             $this->pushBack($id, $value);
@@ -72,7 +72,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
 
         $position = $this->list->pushFront($data);
         $position->setExtra($id);
-        $this->positionMap->add($id, $position);
+        $this->positionsMap->add($id, $position);
 
         return $position;
     }
@@ -90,7 +90,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
 
         $position = $this->list->pushBack($data);
         $position->setExtra($id);
-        $this->positionMap->add($id, $position);
+        $this->positionsMap->add($id, $position);
 
         return $position;
     }
@@ -107,14 +107,14 @@ class MappedLinkedList implements IteratorAggregate, Countable
     {
         if($idAfter !== null) {
             $this->checkExist($idAfter);
-            $position = $this->positionMap->get($idAfter);
+            $position = $this->positionsMap->get($idAfter);
         } else {
             $position = null;
         }
         $this->checkNotExist($id);
         $newPosition = $this->list->pushAfter($position, $data);
         $newPosition->setExtra($id);
-        $this->positionMap->add($id, $newPosition);
+        $this->positionsMap->add($id, $newPosition);
 
         return $newPosition;
     }
@@ -131,14 +131,14 @@ class MappedLinkedList implements IteratorAggregate, Countable
     {
         if($idBefore !== null) {
             $this->checkExist($idBefore);
-            $position = $this->positionMap->get($idBefore);
+            $position = $this->positionsMap->get($idBefore);
         } else {
             $position = null;
         }
         $this->checkNotExist($id);
         $newPosition = $this->list->pushBefore($position, $data);
         $newPosition->setExtra($id);
-        $this->positionMap->add($id, $newPosition);
+        $this->positionsMap->add($id, $newPosition);
 
         return $newPosition;
     }
@@ -154,7 +154,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
 
         $position = $this->list->popFrontPosition();
         $id = $position->getExtra();
-        $this->positionMap->delete($id);
+        $this->positionsMap->delete($id);
 
         return [$id, $position->getData()];
     }
@@ -170,7 +170,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
 
         $position = $this->list->popBackPosition();
         $id = $position->getExtra();
-        $this->positionMap->delete($id);
+        $this->positionsMap->delete($id);
 
         return [$id, $position->getData()];
     }
@@ -185,8 +185,8 @@ class MappedLinkedList implements IteratorAggregate, Countable
     {
         $this->checkExist($id);
 
-        $position = $this->positionMap->get($id);
-        $this->positionMap->delete($id);
+        $position = $this->positionsMap->get($id);
+        $this->positionsMap->delete($id);
 
         return $this->list->pop($position);
     }
@@ -203,7 +203,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
         $this->checkExist($lhsId);
         $this->checkExist($rhsId);
 
-        $this->list->swap($this->positionMap->get($lhsId), $this->positionMap->get($rhsId));
+        $this->list->swap($this->positionsMap->get($lhsId), $this->positionsMap->get($rhsId));
 
         return $this;
     }
@@ -215,7 +215,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
     public function clear(): self
     {
         $this->list->clear();
-        $this->positionMap->clear();
+        $this->positionsMap->clear();
         return $this;
     }
 
@@ -257,7 +257,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
      */
     public function exist(string $id): bool
     {
-        return $this->positionMap->exist($id);
+        return $this->positionsMap->exist($id);
     }
 
     /**
@@ -317,6 +317,15 @@ class MappedLinkedList implements IteratorAggregate, Countable
     }
 
     /**
+     * Returns LinkedList object of collection
+     * @return MappedCollection
+     */
+    public function getPositionsMap(): MappedCollection
+    {
+        return $this->positionsMap;
+    }
+
+    /**
      * @inheritDoc
      * @return MappedLinkedListIterator
      */
@@ -331,5 +340,17 @@ class MappedLinkedList implements IteratorAggregate, Countable
     public function count(): int
     {
         return $this->list->count();
+    }
+
+    /**
+     * Clones object
+     */
+    public function __clone()
+    {
+        $this->list = clone $this->list;
+        $this->positionsMap = clone $this->positionsMap;
+        $this->positionsMap->replaceAll($this->list->getPositionsArray(function(LinkedListItem $item) {
+            return $item->getExtra();
+        }));
     }
 }

@@ -119,4 +119,21 @@ class LinkedListItem
         $this->extra = $extra;
         return $this;
     }
+
+    /**
+     * Clones object
+     */
+    public function __clone()
+    {
+        if(is_object($this->data)) {
+            $this->data = clone $this->data;
+        }
+
+        if(is_object($this->extra)) {
+            $this->extra = clone $this->extra;
+        }
+
+        $this->prev = null;
+        $this->next = null;
+    }
 }

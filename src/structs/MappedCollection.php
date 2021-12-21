@@ -70,6 +70,18 @@ class MappedCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Replace all data from source argument
+     * @param array $source new map contents
+     * @return $this
+     */
+    public function replaceAll(array $source): self
+    {
+        $this->clear();
+        $this->itemsMap = $source;
+        return $this;
+    }
+
+    /**
      * Returns element by ID
      * @param string $id element ID
      * @param null $default default value if element is not found
@@ -181,6 +193,14 @@ class MappedCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->itemsMap);
+    }
+
+    /**
      * Magic method for cloning
      */
     public function __clone()
@@ -194,13 +214,5 @@ class MappedCollection implements IteratorAggregate, Countable
                 $this->itemsMap[$id] = $value;
             }
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getIterator(): ArrayIterator
-    {
-        return new ArrayIterator($this->itemsMap);
     }
 }

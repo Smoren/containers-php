@@ -7,6 +7,7 @@ namespace Smoren\Structs\structs;
 use Countable;
 use Exception;
 use IteratorAggregate;
+use Smoren\Helpers\LoopHelper;
 use Smoren\Structs\exceptions\LinkedListException;
 
 /**
@@ -403,6 +404,25 @@ class LinkedList implements IteratorAggregate, Countable
     }
 
     /**
+     * Returns positions array
+     * @return LinkedListItem[]
+     */
+    public function getPositionsArray(?callable $mapper = null): array
+    {
+        $result = [];
+
+        foreach($this as $pos => $val) {
+            if(is_callable($mapper)) {
+                $result[$mapper($pos)] = $pos;
+            } else {
+                $result[] = $pos;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns index of position in list
      * @param LinkedListItem $position position to get index
      * @return int
@@ -477,5 +497,26 @@ class LinkedList implements IteratorAggregate, Countable
         }
 
         return $this;
+    }
+
+    /**
+     * Clones object
+     */
+    public function __clone()
+    {
+        $buf = [];
+        foreach($this as $pos => $val) {
+            $buf[] = clone $pos;
+        }
+
+        LoopHelper::eachPair($buf, function(LinkedListItem $lhs, LinkedListItem $rhs) {
+            $lhs->setNext($rhs);
+            $rhs->setPrev($lhs);
+        });
+
+        if(count($buf)) {
+            $this->first = $buf[0];
+            $this->last = $buf[count($buf)-1];
+        }
     }
 }

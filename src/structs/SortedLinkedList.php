@@ -83,6 +83,15 @@ abstract class SortedLinkedList implements IteratorAggregate, Countable
     }
 
     /**
+     * Returns source list
+     * @return LinkedList
+     */
+    public function getList(): LinkedList
+    {
+        return $this->list;
+    }
+
+    /**
      * Removes element from the front of list
      * @return mixed data value of removed element
      * @throws LinkedListException
@@ -144,5 +153,13 @@ abstract class SortedLinkedList implements IteratorAggregate, Countable
         }
 
         return $position;
+    }
+
+    /**
+     * Clones object
+     */
+    public function __clone()
+    {
+        $this->list = clone $this->list;
     }
 }

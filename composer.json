@@ -12,7 +12,8 @@
   "require": {
     "php": ">=7.4",
     "ext-json": "*",
-    "smoren/extended-exceptions": "^1.0"
+    "smoren/extended-exceptions": "^1.0",
+    "smoren/helpers": "dev-master"
   },
   "require-dev": {
     "codeception/codeception": "^4.0",

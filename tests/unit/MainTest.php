@@ -504,6 +504,149 @@ class MainTest extends Unit
     }
 
     /**
+     * @throws LinkedListException
+     * @throws MappedCollectionException
+     * @throws MappedLinkedListException
+     */
+    public function testCloneObjects()
+    {
+        /*
+         * MappedCollection
+         */
+        $mc = new MappedCollection(['a1' => 1, 'a2' => 2, 'a3' => 3]);
+        $mcCopy = clone $mc;
+
+        $this->assertTrue($mc->getMap() === $mcCopy->getMap());
+
+        $mc->add('a4', 4);
+        $this->assertEquals(['a1' => 1, 'a2' => 2, 'a3' => 3, 'a4' => 4], $mc->getMap());
+        $this->assertEquals(['a1' => 1, 'a2' => 2, 'a3' => 3], $mcCopy->getMap());
+
+        $mc->delete('a2');
+        $mcCopy->delete('a3');
+
+        $this->assertEquals(['a1' => 1, 'a3' => 3, 'a4' => 4], $mc->getMap());
+        $this->assertEquals(['a1' => 1, 'a2' => 2], $mcCopy->getMap());
+
+        $mc = new MappedCollection(['a1' => 1, 'a2' => 2, 'a3' => 3]);
+        $mcCopy = clone $mc;
+
+        $mcCopy->add('a4', 4);
+        $this->assertEquals(['a1' => 1, 'a2' => 2, 'a3' => 3], $mc->getMap());
+        $this->assertEquals(['a1' => 1, 'a2' => 2, 'a3' => 3, 'a4' => 4], $mcCopy->getMap());
+
+        $mc->delete('a2');
+        $mcCopy->delete('a3');
+
+        $this->assertEquals(['a1' => 1, 'a3' => 3], $mc->getMap());
+        $this->assertEquals(['a1' => 1, 'a2' => 2, 'a4' => 4], $mcCopy->getMap());
+
+        /*
+         * LinkedList
+         */
+        $ll = new LinkedList([1, 2, 3]);
+        $llCopy = clone $ll;
+
+        $this->assertTrue($ll->getFirst() !== $llCopy->getFirst());
+        $this->assertTrue($ll->getLast() !== $llCopy->getLast());
+
+        $ll->pushBack(4);
+        $this->assertEquals([1, 2, 3, 4], $ll->toArray());
+        $this->assertEquals([1, 2, 3], $llCopy->toArray());
+
+        $ll->popFront();
+        $llCopy->popBack();
+
+        $this->assertEquals([2, 3, 4], $ll->toArray());
+        $this->assertEquals([1, 2], $llCopy->toArray());
+
+        $ll = new LinkedList([1, 2, 3]);
+        $llCopy = clone $ll;
+
+        $llCopy->pushBack(4);
+        $this->assertEquals([1, 2, 3], $ll->toArray());
+        $this->assertEquals([1, 2, 3, 4], $llCopy->toArray());
+
+        $ll->popFront();
+        $llCopy->popBack();
+
+        $this->assertEquals([2, 3], $ll->toArray());
+        $this->assertEquals([1, 2, 3], $llCopy->toArray());
+
+        /*
+         * MappedLinkedList
+         */
+        $mll = new MappedLinkedList(['a' => 1, 'b' => 2]);
+        $mllCopy = clone $mll;
+
+        $this->assertTrue($mll->getPositionsMap() !== $mllCopy->getPositionsMap());
+        $this->assertTrue($mll->getList() !== $mllCopy->getList());
+        $this->assertTrue($mll->getList()->getFirst() !== $mllCopy->getList()->getFirst());
+        $this->assertTrue($mll->getList()->getFirst() !== $mllCopy->getList()->getFirst());
+
+        $mll->pushBack('c', 3);
+        $mll->popFront();
+
+        $this->assertEquals(['b' => 2, 'c' => 3], $mll->toArray());
+        $this->assertEquals(['a' => 1, 'b' => 2], $mllCopy->toArray());
+
+        $mll = new MappedLinkedList(['a' => 1, 'b' => 2]);
+        $mllCopy = clone $mll;
+
+        $mllCopy->pushBack('c', 3);
+        $mllCopy->popFront();
+
+        $this->assertEquals(['a' => 1, 'b' => 2], $mll->toArray());
+        $this->assertEquals(['b' => 2, 'c' => 3], $mllCopy->toArray());
+
+        /*
+         * SortedLinkedList
+         */
+        $sll = new IntegerSortedLinkedList([3, 1, 2]);
+        $sllCopy = clone $sll;
+
+        $this->assertTrue($sll->getList() !== $sllCopy->getList());
+
+        $sll->insert(2);
+        $sll->popBack();
+
+        $this->assertEquals([1, 2, 2], $sll->toArray());
+        $this->assertEquals([1, 2, 3], $sllCopy->toArray());
+
+        $sll = new IntegerSortedLinkedList([3, 1, 2]);
+        $sllCopy = clone $sll;
+
+        $sllCopy->insert(2);
+        $sllCopy->popBack();
+
+        $this->assertEquals([1, 2, 3], $sll->toArray());
+        $this->assertEquals([1, 2, 2], $sllCopy->toArray());
+
+        /*
+         * SortedMappedLinkedList
+         */
+        $smll = new ArrayMappedSortedLinkedList(['a' => ['id' => 'a'], 'c' => ['id' => 'c']]);
+        $smllCopy = clone $smll;
+
+        $this->assertTrue($smll->getList() !== $smllCopy->getList());
+
+        $smll->insert('b', ['id' => 'b']);
+        $smll->popBack();
+
+        $this->assertEquals(['a' => ['id' => 'a'], 'b' => ['id' => 'b']], $smll->toArray());
+        $this->assertEquals(['a' => ['id' => 'a'], 'c' => ['id' => 'c']], $smllCopy->toArray());
+
+        $smll = new ArrayMappedSortedLinkedList(['a' => ['id' => 'a'], 'c' => ['id' => 'c']]);
+        $smllCopy = clone $smll;
+
+        $smllCopy->insert('b', ['id' => 'b']);
+        $smllCopy->popBack();
+
+        $this->assertEquals(['a' => ['id' => 'a'], 'c' => ['id' => 'c']], $smll->toArray());
+        $this->assertEquals(['a' => ['id' => 'a'], 'b' => ['id' => 'b']], $smllCopy->toArray());
+    }
+
+    /**
      * @param array $source
      * @param string $columnName
      * @return array
