@@ -176,7 +176,7 @@ class MappedLinkedList implements IteratorAggregate, Countable
     }
 
     /**
-     * Removes element from target element position
+     * Removes element from target element ID
      * @param string $id element ID
      * @return LinkedListItem old position of element
      * @throws MappedLinkedListException|MappedCollectionException
@@ -189,6 +189,29 @@ class MappedLinkedList implements IteratorAggregate, Countable
         $this->positionsMap->delete($id);
 
         return $this->list->pop($position);
+    }
+
+    /**
+     * Returns element with target element ID
+     * @param string $id element ID
+     * @return mixed element data value
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function get(string $id)
+    {
+        return $this->getPosition($id)->getData();
+    }
+
+    /**
+     * Returns element position with target element ID
+     * @param string $id element ID
+     * @return LinkedListItem position of element
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function getPosition(string $id): LinkedListItem
+    {
+        $this->checkExist($id);
+        return $this->positionsMap->get($id);
     }
 
     /**

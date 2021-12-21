@@ -309,7 +309,7 @@ class LinkedList implements IteratorAggregate, Countable
                 /** @var LinkedListItem $rhsItem */
                 $rhsItem = $it->key();
 
-                if($comparator($lhs, $rhs)) {
+                if($comparator($lhs, $rhs, $lhsItem, $rhsItem)) {
                     $this->swap($lhsItem, $rhsItem);
                     $flagStop = false;
                 }

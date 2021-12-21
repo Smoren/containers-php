@@ -16,7 +16,7 @@ use Smoren\Structs\exceptions\SortedLinkedListException;
 /**
  * Class SortedMappedLinkedList
  */
-abstract class SortedMappedLinkedList implements IteratorAggregate, Countable
+class SortedMappedLinkedList implements IteratorAggregate, Countable
 {
     /**
      * @var MappedLinkedList data source
@@ -60,7 +60,7 @@ abstract class SortedMappedLinkedList implements IteratorAggregate, Countable
      */
     public function insert(string $id, $data): LinkedListItem
     {
-        return $this->list->pushAfter($this->findLeftPosition($data), $id, $data);
+        return $this->list->pushAfter($this->findLeftPosition($id, $data), $id, $data);
     }
 
     /**
@@ -130,6 +130,28 @@ abstract class SortedMappedLinkedList implements IteratorAggregate, Countable
     }
 
     /**
+     * Returns element with target element ID
+     * @param string $id target element ID
+     * @return mixed element data value
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function get(string $id)
+    {
+        return $this->list->get($id);
+    }
+
+    /**
+     * Returns element position from target element position
+     * @param string $id target element ID
+     * @return LinkedListItem position of element
+     * @throws MappedLinkedListException|MappedCollectionException
+     */
+    public function getPosition(string $id): LinkedListItem
+    {
+        return $this->list->getPosition($id);
+    }
+
+    /**
      * Clears list
      * @return $this
      */
@@ -143,18 +165,26 @@ abstract class SortedMappedLinkedList implements IteratorAggregate, Countable
      * Returns comparator function for sorting and position search
      * @return callable
      */
-    abstract protected function getComparator(): callable;
+    protected function getComparator(): callable
+    {
+        return function($lhs, $rhs, LinkedListItem $lhsPos, LinkedListItem $rhsPos) {
+            return $lhsPos->getExtra() > $rhsPos->getExtra();
+        };
+    }
 
     /**
      * Returns position max element which is less than argument (using comparator)
+     * @param string $id element ID
      * @param mixed $data element data value
      * @return LinkedListItem|null
+     * @throws MappedLinkedListException|MappedCollectionException
      */
-    protected function findLeftPosition($data): ?string
+    protected function findLeftPosition(string $id, $data): ?string
     {
         $position = null;
+        $possiblePosition = new LinkedListItem($data, null, null, $id);
         foreach($this->list as $id => $val) {
-            if(!($this->comparator)($data, $val)) {
+            if(!($this->comparator)($data, $val, $possiblePosition, $this->getPosition($id))) {
                 break;
             }
             $position = $id;

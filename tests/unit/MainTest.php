@@ -13,6 +13,7 @@ use Smoren\Structs\structs\LinkedList;
 use Smoren\Structs\structs\LinkedListItem;
 use Smoren\Structs\structs\MappedCollection;
 use Smoren\Structs\structs\MappedLinkedList;
+use Smoren\Structs\structs\SortedMappedLinkedList;
 use Smoren\Structs\tests\unit\utility\ArraySortedMappedLinkedList;
 use Smoren\Structs\tests\unit\utility\IntegerSortedLinkedList;
 
@@ -412,6 +413,23 @@ class MainTest extends Unit
      */
     public function testMappedSortedLinkedList()
     {
+        $ll = new SortedMappedLinkedList([1 => -1, 10 => -10, 5 => -5, 6 => -6, 0 => 0]);
+        $this->assertEquals([0, 1, 5, 6, 10], array_keys($ll->toArray()));
+        $this->assertEquals([0, -1, -5, -6, -10], array_values($ll->toArray()));
+
+        $ll->insert(3, -3);
+        $this->assertEquals([0, 1, 3, 5, 6, 10], array_keys($ll->toArray()));
+        $this->assertEquals([0, -1, -3, -5, -6, -10], array_values($ll->toArray()));
+
+        $ll->popBack();
+        $ll->popFront();
+        $this->assertEquals([1, 3, 5, 6], array_keys($ll->toArray()));
+        $this->assertEquals([-1, -3, -5, -6], array_values($ll->toArray()));
+
+        $this->assertEquals(-3, $ll->get(3));
+        $this->assertEquals(-1, $ll->get(1));
+        $this->assertEquals(-6, $ll->get(6));
+
         $ll = new ArraySortedMappedLinkedList([
             5 => ['id' => 5],
             1 => ['id' => 1],
