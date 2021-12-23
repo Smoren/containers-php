@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Smoren\Structs\tests\unit;
+namespace Smoren\Structs\Tests\Unit;
 
 use Codeception\Lib\Console\Output;
 use Codeception\Test\Unit;
@@ -14,8 +14,8 @@ use Smoren\Structs\Structs\LinkedListItem;
 use Smoren\Structs\Structs\MappedCollection;
 use Smoren\Structs\Structs\MappedLinkedList;
 use Smoren\Structs\Structs\SortedMappedLinkedList;
-use Smoren\Structs\tests\unit\utility\ArraySortedMappedLinkedList;
-use Smoren\Structs\tests\unit\utility\IntegerSortedLinkedList;
+use Smoren\Structs\Tests\Unit\Utility\ArraySortedMappedLinkedList;
+use Smoren\Structs\Tests\Unit\Utility\IntegerSortedLinkedList;
 
 class MainTest extends Unit
 {

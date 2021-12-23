@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Smoren\Structs\tests\unit\utility;
+namespace Smoren\Structs\Tests\Unit\Utility;
 
 
 use Smoren\Structs\Structs\SortedLinkedList;

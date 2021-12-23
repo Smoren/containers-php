@@ -22,7 +22,7 @@
   "autoload": {
     "psr-4": {
       "Smoren\\Structs\\": "src",
-      "Smoren\\Structs\\tests\\": "tests"
+      "Smoren\\Structs\\Tests\\Unit\\": "tests/unit"
     }
   },
   "config": {
