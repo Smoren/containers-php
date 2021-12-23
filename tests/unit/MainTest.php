@@ -6,6 +6,7 @@ namespace Smoren\Structs\Tests\Unit;
 use Codeception\Lib\Console\Output;
 use Codeception\Test\Unit;
 use Exception;
+use Smoren\ExtendedExceptions\BaseException;
 use Smoren\Structs\Exceptions\LinkedListException;
 use Smoren\Structs\Exceptions\MappedCollectionException;
 use Smoren\Structs\Exceptions\MappedLinkedListException;
@@ -175,6 +176,20 @@ class MainTest extends Unit
         $this->assertEquals([], $ll->toArray());
         $this->assertEquals(0, $ll->count());
 
+        try {
+            $ll->popBack();
+            $this->assertTrue(false);
+        } catch(LinkedListException $e) {
+            $this->assertEquals(LinkedListException::STATUS_EMPTY, $e->getCode());
+        }
+
+        try {
+            $ll->popFront();
+            $this->assertTrue(false);
+        } catch(LinkedListException $e) {
+            $this->assertEquals(LinkedListException::STATUS_EMPTY, $e->getCode());
+        }
+
         $ll = new LinkedList(['a1', 'a2', 'a3']);
         $this->assertEquals(['a1', 'a2', 'a3'], $ll->toArray());
         $this->assertEquals(3, $ll->count());
@@ -235,6 +250,27 @@ class MainTest extends Unit
         $this->assertEquals([-120, -110, 100, 101, 102, 110, 120], array_keys($ll->toArray()));
         $this->assertEquals([-20, -10, 0, 1, 2, 10, 20], array_values($ll->toArray()));
         $this->assertEquals(7, $ll->count());
+
+        try {
+            $ll->swap(-121, 110);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
+        try {
+            $ll->swap(-120, 111);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
+        try {
+            $ll->swap(-121, 111);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
 
         $ll->swap(-120, 110);
         $this->assertEquals([110, -110, 100, 101, 102, -120, 120], array_keys($ll->toArray()));
@@ -303,6 +339,27 @@ class MainTest extends Unit
         $ll->pushBefore(-110, -111, -11);
         $ll->pushBefore(998, 997, 97);
 
+        try {
+            $ll->pushBefore(1000, 1001, 100);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
+        try {
+            $ll->pushBefore(998, 997, 100);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_EXIST, $e->getCode());
+        }
+
+        try {
+            $ll->pushBefore(1000, 997, 100);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
         $this->assertEquals([-999, -998, -111, -110, 100, 102, 110, 997, 998, 999], array_keys($ll->toArray()));
         $this->assertEquals([-99, -98, -11, -10, 0, 2, 10, 97, 98, 99], array_values($ll->toArray()));
         $this->assertEquals(10, $ll->count());
@@ -317,6 +374,27 @@ class MainTest extends Unit
         $this->assertEquals([-99, -98, -11, -10, 0, 2, 3, 10, 97, 98, 99, 100], array_values($ll->toArray()));
         $this->assertEquals(12, $ll->count());
 
+        try {
+            $ll->pushAfter(2000, 2001, 2001);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
+        try {
+            $ll->pushAfter(999, 1000, 1000);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_EXIST, $e->getCode());
+        }
+
+        try {
+            $ll->pushBefore(2000, 1000, 1000);
+            $this->assertTrue(false);
+        } catch(MappedLinkedListException $e) {
+            $this->assertEquals(MappedLinkedListException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
         $ll->clear();
         $this->assertEquals([], $ll->toArray());
         $this->assertEquals(0, $ll->count());
@@ -325,8 +403,6 @@ class MainTest extends Unit
         $this->assertEquals(['a1', 'a2', 'a3'], array_keys($ll->toArray()));
         $this->assertEquals(['b1', 'b2', 'b3'], array_values($ll->toArray()));
         $this->assertEquals(3, $ll->count());
-
-        // TODO try checks
     }
 
     /**
