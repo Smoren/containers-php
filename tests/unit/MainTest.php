@@ -1,22 +1,22 @@
 <?php
 
 
-namespace Smoren\Structs\Tests\Unit;
+namespace Smoren\Containers\Tests\Unit;
 
 use Codeception\Lib\Console\Output;
 use Codeception\Test\Unit;
 use Exception;
 use Smoren\ExtendedExceptions\BaseException;
-use Smoren\Structs\Exceptions\LinkedListException;
-use Smoren\Structs\Exceptions\MappedCollectionException;
-use Smoren\Structs\Exceptions\MappedLinkedListException;
-use Smoren\Structs\Structs\LinkedList;
-use Smoren\Structs\Structs\LinkedListItem;
-use Smoren\Structs\Structs\MappedCollection;
-use Smoren\Structs\Structs\MappedLinkedList;
-use Smoren\Structs\Structs\SortedMappedLinkedList;
-use Smoren\Structs\Tests\Unit\Utility\ArraySortedMappedLinkedList;
-use Smoren\Structs\Tests\Unit\Utility\IntegerSortedLinkedList;
+use Smoren\Containers\Exceptions\LinkedListException;
+use Smoren\Containers\Exceptions\MappedCollectionException;
+use Smoren\Containers\Exceptions\MappedLinkedListException;
+use Smoren\Containers\Structs\LinkedList;
+use Smoren\Containers\Structs\LinkedListItem;
+use Smoren\Containers\Structs\MappedCollection;
+use Smoren\Containers\Structs\MappedLinkedList;
+use Smoren\Containers\Structs\SortedMappedLinkedList;
+use Smoren\Containers\Tests\Unit\Utility\ArraySortedMappedLinkedList;
+use Smoren\Containers\Tests\Unit\Utility\IntegerSortedLinkedList;
 
 class MainTest extends Unit
 {

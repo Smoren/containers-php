@@ -18,8 +18,8 @@ composer install
 Classic implementation of linked list structure.
 
 ```php
-use Smoren\Structs\Structs\LinkedList;
-use Smoren\Structs\Structs\LinkedListItem;
+use Smoren\Containers\Structs\LinkedList;
+use Smoren\Containers\Structs\LinkedListItem;
 
 $ll = new LinkedList([6, 4, 2]);
 var_dump($ll->count()); // output: 3
@@ -73,8 +73,8 @@ print_r($ll->toArray()); // output: []
 Map-like data structure.
 
 ```php
-use Smoren\Structs\Exceptions\MappedCollectionException;
-use Smoren\Structs\Structs\MappedCollection;
+use Smoren\Containers\Exceptions\MappedCollectionException;
+use Smoren\Containers\Structs\MappedCollection;
 
 $coll = new MappedCollection(['1' => ['id' => 1]]);
 var_dump($coll->count()); // output: 1
@@ -122,7 +122,7 @@ print_r($coll->toArray()); // output: []
 LinkedList with mapping by id.
 
 ```php
-use Smoren\Structs\Structs\MappedLinkedList;
+use Smoren\Containers\Structs\MappedLinkedList;
 
 $mll = new MappedLinkedList([]);
 var_dump($mll->count()); // output: 0
@@ -172,8 +172,8 @@ print_r($mllNew->toArray()); // output: []
 ### SortedLinkedList
 
 ```php
-use Smoren\Structs\Structs\SortedLinkedList;
-use Smoren\Structs\Exceptions\LinkedListException;
+use Smoren\Containers\Structs\SortedLinkedList;
+use Smoren\Containers\Exceptions\LinkedListException;
 
 /**
  * Class IntegerSortedLinkedList
@@ -239,9 +239,9 @@ try {
 LinkedList with presort and mapping.
 
 ```php
-use Smoren\Structs\Exceptions\MappedLinkedListException;
-use Smoren\Structs\Structs\LinkedListItem;
-use Smoren\Structs\Structs\SortedMappedLinkedList;
+use Smoren\Containers\Exceptions\MappedLinkedListException;
+use Smoren\Containers\Structs\LinkedListItem;
+use Smoren\Containers\Structs\SortedMappedLinkedList;
 
 $smll = new SortedMappedLinkedList([1 => -1, 10 => -10, 5 => -5]);
 var_dump($smll->count()); // output: 3

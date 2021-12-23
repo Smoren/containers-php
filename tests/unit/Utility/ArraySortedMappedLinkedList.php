@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Smoren\Structs\Tests\Unit\Utility;
+namespace Smoren\Containers\Tests\Unit\Utility;
 
 
-use Smoren\Structs\Structs\SortedMappedLinkedList;
+use Smoren\Containers\Structs\SortedMappedLinkedList;
 
 /**
  * Class ArrayMappedSortedLinkedList

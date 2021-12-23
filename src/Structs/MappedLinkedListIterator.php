@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Smoren\Structs\Structs;
+namespace Smoren\Containers\Structs;
 
 
 use Iterator;

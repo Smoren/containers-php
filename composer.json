@@ -1,7 +1,7 @@
 {
-  "name": "smoren/structs",
-  "description": "Abstract data structures for PHP",
-  "keywords": ["abstract", "structures", "collection", "list", "linked list"],
+  "name": "smoren/containers",
+  "description": "Abstract data containers and structures for PHP",
+  "keywords": ["abstract", "structures", "container", "collection", "list", "linked list", "map"],
   "license": "MIT",
   "authors": [
     {
@@ -21,8 +21,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Smoren\\Structs\\": "src",
-      "Smoren\\Structs\\Tests\\Unit\\": "tests/unit"
+      "Smoren\\Containers\\": "src",
+      "Smoren\\Containers\\Tests\\Unit\\": "tests/unit"
     }
   },
   "config": {

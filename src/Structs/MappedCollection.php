@@ -1,13 +1,13 @@
 <?php
 
 
-namespace Smoren\Structs\Structs;
+namespace Smoren\Containers\Structs;
 
 
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Smoren\Structs\Exceptions\MappedCollectionException;
+use Smoren\Containers\Exceptions\MappedCollectionException;
 
 /**
  * Class MappedCollection

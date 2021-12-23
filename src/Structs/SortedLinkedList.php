@@ -1,15 +1,15 @@
 <?php
 
 
-namespace Smoren\Structs\Structs;
+namespace Smoren\Containers\Structs;
 
 
 use Closure;
 use Countable;
 use Exception;
 use IteratorAggregate;
-use Smoren\Structs\Exceptions\LinkedListException;
-use Smoren\Structs\Exceptions\SortedLinkedListException;
+use Smoren\Containers\Exceptions\LinkedListException;
+use Smoren\Containers\Exceptions\SortedLinkedListException;
 
 abstract class SortedLinkedList implements IteratorAggregate, Countable
 {
