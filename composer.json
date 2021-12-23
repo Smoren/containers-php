@@ -13,7 +13,7 @@
     "php": ">=7.4",
     "ext-json": "*",
     "smoren/extended-exceptions": "^1.0",
-    "smoren/helpers": "dev-master"
+    "smoren/helpers": "^0.1"
   },
   "require-dev": {
     "codeception/codeception": "^4.0",
