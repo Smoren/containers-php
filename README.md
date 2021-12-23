@@ -3,7 +3,7 @@ Abstract data structures for PHP
 
 ### How to install as dependency to your project
 ```
-composer require smoren/structs
+composer require smoren/containers
 ```
 
 ### Unit testing
