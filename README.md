@@ -1,5 +1,5 @@
-# Structs
-Abstract data structures for PHP
+# Data containers
+Abstract data containers and structures for PHP
 
 ### How to install as dependency to your project
 ```
@@ -15,7 +15,7 @@ composer install
 
 ### LinkedList
 
-Classic implementation of linked list structure.
+Classic implementation of linked list structure. Also can be used as stack and queue.
 
 ```php
 use Smoren\Containers\Structs\LinkedList;
