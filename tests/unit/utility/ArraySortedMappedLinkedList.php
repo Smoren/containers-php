@@ -4,7 +4,7 @@
 namespace Smoren\Structs\tests\unit\utility;
 
 
-use Smoren\Structs\structs\SortedMappedLinkedList;
+use Smoren\Structs\Structs\SortedMappedLinkedList;
 
 /**
  * Class ArrayMappedSortedLinkedList

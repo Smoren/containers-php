@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Smoren\Structs\structs;
+namespace Smoren\Structs\Structs;
 
 use Countable;
 use Exception;
 use IteratorAggregate;
-use Smoren\Structs\exceptions\LinkedListException;
-use Smoren\Structs\exceptions\MappedCollectionException;
-use Smoren\Structs\exceptions\MappedLinkedListException;
+use Smoren\Structs\Exceptions\LinkedListException;
+use Smoren\Structs\Exceptions\MappedCollectionException;
+use Smoren\Structs\Exceptions\MappedLinkedListException;
 
 class MappedLinkedList implements IteratorAggregate, Countable
 {

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Smoren\Structs\structs;
+namespace Smoren\Structs\Structs;
 
 
 use Countable;
 use Exception;
 use IteratorAggregate;
 use Smoren\Helpers\LoopHelper;
-use Smoren\Structs\exceptions\LinkedListException;
+use Smoren\Structs\Exceptions\LinkedListException;
 
 /**
  * Class LinkedList

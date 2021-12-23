@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Smoren\Structs\structs;
+namespace Smoren\Structs\Structs;
 
 /**
  * Class LinkedListItem

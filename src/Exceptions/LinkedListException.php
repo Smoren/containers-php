@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Smoren\Structs\exceptions;
+namespace Smoren\Structs\Exceptions;
 
 
 use Smoren\ExtendedExceptions\BadDataException;
 
 /**
  * Class LinkedListException
- * @package Smoren\Structs\exceptions
+ * @package Smoren\Structs\Exceptions
  */
 class LinkedListException extends BadDataException
 {

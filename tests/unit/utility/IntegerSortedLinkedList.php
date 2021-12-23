@@ -4,7 +4,7 @@
 namespace Smoren\Structs\tests\unit\utility;
 
 
-use Smoren\Structs\structs\SortedLinkedList;
+use Smoren\Structs\Structs\SortedLinkedList;
 
 /**
  * Class IntegerSortedLinkedList
