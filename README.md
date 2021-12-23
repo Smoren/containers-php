@@ -45,7 +45,7 @@ var_dump($ll->popFront()); // output: 7
 var_dump($ll->popBack()); // output: 1
 print_r($ll->toArray()); // output: [6, 4, 2]
 
-$ll->pop($ll->getFirst()->getNext());
+$ll->delete($ll->getFirst()->getNext());
 print_r($ll->toArray()); // output: [6, 2]
 
 $llNew = LinkedList::merge(new LinkedList([-2, -1]), $ll, new LinkedList([1, 2]));
@@ -200,7 +200,7 @@ $pos = $sll->insert(3);
 var_dump($sll->count()); // output: 5
 print_r($sll->toArray()); // output: [1, 2, 2, 3, 5]
 
-var_dump($sll->pop($pos)); // output: 3
+var_dump($sll->delete($pos)); // output: 3
 var_dump($sll->count()); // output: 4
 print_r($sll->toArray()); // output: [1, 2, 2, 5]
 
@@ -295,7 +295,7 @@ try {
 }
 
 /** @var LinkedListItem $pos */
-$pos = $ll->pop(-1);
+$pos = $ll->delete(-1);
 print_r($pos->getData()); // output: ['a' => 1]
 var_dump($smll->count()); // output: 2
 print_r($smll->toArray()); // output: [-2 => ['a' => 2], -5 => ['a' => 5]]

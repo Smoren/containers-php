@@ -178,7 +178,7 @@ class LinkedList implements IteratorAggregate, Countable
         if(!$this->length) {
             throw new LinkedListException('empty', LinkedListException::STATUS_EMPTY);
         }
-        return $this->pop($this->first);
+        return $this->delete($this->first);
     }
 
     /**
@@ -191,7 +191,7 @@ class LinkedList implements IteratorAggregate, Countable
         if(!$this->length) {
             throw new LinkedListException('empty', LinkedListException::STATUS_EMPTY);
         }
-        return $this->pop($this->last);
+        return $this->delete($this->last);
     }
 
     /**
@@ -199,7 +199,7 @@ class LinkedList implements IteratorAggregate, Countable
      * @param LinkedListItem $item target element position
      * @return LinkedListItem old position of element
      */
-    public function pop(LinkedListItem $item): LinkedListItem
+    public function delete(LinkedListItem $item): LinkedListItem
     {
         $prev = $item->getPrev();
         $next = $item->getNext();

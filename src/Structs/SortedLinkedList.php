@@ -116,9 +116,9 @@ abstract class SortedLinkedList implements IteratorAggregate, Countable
      * @param LinkedListItem $item target element position
      * @return LinkedListItem old position of element
      */
-    public function pop(LinkedListItem $item): LinkedListItem
+    public function delete(LinkedListItem $item): LinkedListItem
     {
-        return $this->list->pop($item);
+        return $this->list->delete($item);
     }
 
     /**

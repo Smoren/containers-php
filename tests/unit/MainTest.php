@@ -150,7 +150,7 @@ class MainTest extends Unit
         $this->assertEquals([2, 0, 1, 1, 2], $ll->toArray());
         $this->assertEquals(5, $ll->count());
 
-        $ll->pop($ll->getFirst()->getNext()->getNext());
+        $ll->delete($ll->getFirst()->getNext()->getNext());
         $this->assertEquals([2, 0, 1, 2], $ll->toArray());
         $this->assertEquals(4, $ll->count());
 
@@ -322,7 +322,7 @@ class MainTest extends Unit
         $this->assertEquals([-10, 0, 1, 2, 10], array_values($ll->toArray()));
         $this->assertEquals(5, $ll->count());
 
-        $this->assertEquals(1, $ll->pop(101)->getData());
+        $this->assertEquals(1, $ll->delete(101)->getData());
         $this->assertEquals([-110, 100, 102, 110], array_keys($ll->toArray()));
         $this->assertEquals([-10, 0, 2, 10], array_values($ll->toArray()));
         $this->assertEquals(4, $ll->count());
@@ -435,7 +435,7 @@ class MainTest extends Unit
         $this->assertCount(8, $ll);
         $this->assertEquals([0, 1, 2, 2, 3, 4, 5, 6], $ll->toArray());
 
-        $ll->pop($pos);
+        $ll->delete($pos);
         $this->assertCount(7, $ll);
         $this->assertEquals([0, 1, 2, 2, 4, 5, 6], $ll->toArray());
 
@@ -545,7 +545,7 @@ class MainTest extends Unit
         $this->assertEquals([0, 1, 2, 3, 4, 5, 6], $this->getColumn($ll->toArray(), 'id'));
         $this->assertEquals([0, 1, 2, 3, 4, 5, 6], array_keys($ll->toArray()));
 
-        $ll->pop(3);
+        $ll->delete(3);
         $this->assertCount(6, $ll);
         $this->assertEquals([0, 1, 2, 4, 5, 6], $this->getColumn($ll->toArray(), 'id'));
         $this->assertEquals([0, 1, 2, 4, 5, 6], array_keys($ll->toArray()));

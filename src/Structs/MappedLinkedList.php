@@ -181,14 +181,14 @@ class MappedLinkedList implements IteratorAggregate, Countable
      * @return LinkedListItem old position of element
      * @throws MappedLinkedListException|MappedCollectionException
      */
-    public function pop(string $id): LinkedListItem
+    public function delete(string $id): LinkedListItem
     {
         $this->checkExist($id);
 
         $position = $this->positionsMap->get($id);
         $this->positionsMap->delete($id);
 
-        return $this->list->pop($position);
+        return $this->list->delete($position);
     }
 
     /**

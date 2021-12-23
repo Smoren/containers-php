@@ -124,9 +124,9 @@ class SortedMappedLinkedList implements IteratorAggregate, Countable
      * @return LinkedListItem old position of element
      * @throws MappedLinkedListException|MappedCollectionException
      */
-    public function pop(string $id): LinkedListItem
+    public function delete(string $id): LinkedListItem
     {
-        return $this->list->pop($id);
+        return $this->list->delete($id);
     }
 
     /**
