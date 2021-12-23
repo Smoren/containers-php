@@ -48,7 +48,7 @@ class SortedMappedLinkedList implements IteratorAggregate, Countable
         }
 
         $this->comparator = $this->getComparator();
-        $this->list->sort($this->comparator);
+        $this->refresh();
     }
 
     /**
@@ -158,6 +158,17 @@ class SortedMappedLinkedList implements IteratorAggregate, Countable
     public function clear(): self
     {
         $this->list->clear();
+        return $this;
+    }
+
+    /**
+     * Refreshes items order
+     * @return $this
+     * @throws Exception
+     */
+    public function refresh(): self
+    {
+        $this->list->sort($this->comparator);
         return $this;
     }
 
