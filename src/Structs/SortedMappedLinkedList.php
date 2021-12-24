@@ -141,6 +141,16 @@ class SortedMappedLinkedList implements IteratorAggregate, Countable
     }
 
     /**
+     * Returns bool flag of element existence
+     * @param string $id element ID
+     * @return bool
+     */
+    public function exist(string $id): bool
+    {
+        return $this->list->exist($id);
+    }
+
+    /**
      * Returns element position from target element position
      * @param string $id target element ID
      * @return LinkedListItem position of element
