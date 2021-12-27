@@ -45,14 +45,16 @@ class MappedCollection implements IteratorAggregate, Countable
     /**
      * Removes element from collection by ID
      * @param string $id element ID
-     * @return $this
+     * @return mixed removed element
      * @throws MappedCollectionException
      */
-    public function delete(string $id): self
+    public function delete(string $id)
     {
         $this->checkExist($id);
+        $result = $this->itemsMap[$id];
         unset($this->itemsMap[$id]);
-        return $this;
+
+        return $result;
     }
 
     /**
