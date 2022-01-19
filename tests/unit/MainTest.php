@@ -6,6 +6,8 @@ namespace Smoren\Containers\Tests\Unit;
 use Codeception\Lib\Console\Output;
 use Codeception\Test\Unit;
 use Exception;
+use Smoren\Containers\Exceptions\GraphException;
+use Smoren\Containers\Structs\Graph;
 use Smoren\ExtendedExceptions\BaseException;
 use Smoren\Containers\Exceptions\LinkedListException;
 use Smoren\Containers\Exceptions\MappedCollectionException;
@@ -595,6 +597,90 @@ class MainTest extends Unit
         $ll->clear();
         $this->assertCount(0, $ll);
         $this->assertEquals([], $ll->toArray());
+    }
+
+    public function testGraph()
+    {
+        $graph = new Graph(
+            [1 => 11, 2 => 22, 3 => 33, 4 => 44, 5 => 55],
+            [[1, 2], [2, 3], [3, 4], [3, 5], [1, 5]]
+        );
+
+        $this->assertCount(5, $graph);
+
+        try {
+            $graph->getItem(6);
+            $this->assertTrue(false);
+        } catch(GraphException $e) {
+            $this->assertEquals(GraphException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
+        $this->assertEquals([], $graph->getItem(1)->getPrevItemIds());
+        $this->assertEquals([2, 5], $graph->getItem(1)->getNextItemIds());
+
+        $this->assertEquals([1], $graph->getItem(2)->getPrevItemIds());
+        $this->assertEquals([3], $graph->getItem(2)->getNextItemIds());
+
+        $this->assertEquals([2], $graph->getItem(3)->getPrevItemIds());
+        $this->assertEquals([4, 5], $graph->getItem(3)->getNextItemIds());
+
+        $this->assertEquals([3], $graph->getItem(4)->getPrevItemIds());
+        $this->assertEquals([], $graph->getItem(4)->getNextItemIds());
+
+        $this->assertEquals([3, 1], $graph->getItem(5)->getPrevItemIds());
+        $this->assertEquals([], $graph->getItem(5)->getNextItemIds());
+
+        $graph->insert(6, 66);
+        $this->assertCount(6, $graph);
+
+        $graph->link(1, 6);
+        $graph->link(6, 5);
+
+        $this->assertEquals([], $graph->getItem(1)->getPrevItemIds());
+        $this->assertEquals([2, 5, 6], $graph->getItem(1)->getNextItemIds());
+
+        $this->assertEquals([1], $graph->getItem(2)->getPrevItemIds());
+        $this->assertEquals([3], $graph->getItem(2)->getNextItemIds());
+
+        $this->assertEquals([2], $graph->getItem(3)->getPrevItemIds());
+        $this->assertEquals([4, 5], $graph->getItem(3)->getNextItemIds());
+
+        $this->assertEquals([3], $graph->getItem(4)->getPrevItemIds());
+        $this->assertEquals([], $graph->getItem(4)->getNextItemIds());
+
+        $this->assertEquals([3, 1, 6], $graph->getItem(5)->getPrevItemIds());
+        $this->assertEquals([], $graph->getItem(5)->getNextItemIds());
+
+        $this->assertEquals([1], $graph->getItem(6)->getPrevItemIds());
+        $this->assertEquals([5], $graph->getItem(6)->getNextItemIds());
+
+        $graph->unlink(1, 5);
+        $graph->unlink(3, 5);
+
+        try {
+            $graph->unlink(3, 5);
+            $this->assertTrue(false);
+        } catch(GraphException $e) {
+            $this->assertEquals(GraphException::STATUS_ID_NOT_EXIST, $e->getCode());
+        }
+
+        $this->assertEquals([], $graph->getItem(1)->getPrevItemIds());
+        $this->assertEquals([2, 6], $graph->getItem(1)->getNextItemIds());
+
+        $this->assertEquals([1], $graph->getItem(2)->getPrevItemIds());
+        $this->assertEquals([3], $graph->getItem(2)->getNextItemIds());
+
+        $this->assertEquals([2], $graph->getItem(3)->getPrevItemIds());
+        $this->assertEquals([4], $graph->getItem(3)->getNextItemIds());
+
+        $this->assertEquals([3], $graph->getItem(4)->getPrevItemIds());
+        $this->assertEquals([], $graph->getItem(4)->getNextItemIds());
+
+        $this->assertEquals([6], $graph->getItem(5)->getPrevItemIds());
+        $this->assertEquals([], $graph->getItem(5)->getNextItemIds());
+
+        $this->assertEquals([1], $graph->getItem(6)->getPrevItemIds());
+        $this->assertEquals([5], $graph->getItem(6)->getNextItemIds());
     }
 
     /**
