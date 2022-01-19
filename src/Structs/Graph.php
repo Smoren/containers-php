@@ -59,12 +59,14 @@ class Graph implements Countable
         $item = $this->getItem($id);
 
         foreach($item->getPrevItems() as $prevItem) {
-            $prevItem->deleteNextItem($item);
+            $prevItem->deleteNextItem($id);
         }
 
         foreach($item->getNextItems() as $nextItem) {
-            $nextItem->deletePrevItem($item);
+            $nextItem->deletePrevItem($id);
         }
+
+        unset($this->itemsMap[$id]);
 
         return $item->getData();
     }
@@ -91,16 +93,17 @@ class Graph implements Countable
      * Deletes link of 2 items
      * @param string $lhsId left item ID
      * @param string $rhsId right item ID
+     * @param string|null $type link type
      * @return $this
      * @throws GraphException
      */
-    public function unlink(string $lhsId, string $rhsId): self
+    public function unlink(string $lhsId, string $rhsId, ?string $type = null): self
     {
         $lhs = $this->get($lhsId);
         $rhs = $this->get($rhsId);
 
-        $lhs->deleteNextItem($rhs->getId());
-        $rhs->deletePrevItem($lhs->getId());
+        $lhs->deleteNextItem($rhs->getId(), $type);
+        $rhs->deletePrevItem($lhs->getId(), $type);
 
         return $this;
     }
