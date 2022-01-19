@@ -17,7 +17,7 @@ class Graph implements Countable
     /**
      * Graph constructor.
      * @param array $dataMap map of items data by ID ([ID => data, ...])
-     * @param array $links items links ([[leftItemId, rightItemId], ...])
+     * @param array $links items links ([[leftItemId, rightItemId, linkType], ...])
      * @throws GraphException
      */
     public function __construct(array $dataMap = [], array $links = [])
@@ -76,13 +76,13 @@ class Graph implements Countable
      * @return $this
      * @throws GraphException
      */
-    public function link(string $lhsId, string $rhsId): self
+    public function link(string $lhsId, string $rhsId, string $type = 'default'): self
     {
         $lhs = $this->get($lhsId);
         $rhs = $this->get($rhsId);
 
-        $lhs->addNextItem($rhs);
-        $rhs->addPrevItem($lhs);
+        $lhs->addNextItem($rhs, $type);
+        $rhs->addPrevItem($lhs, $type);
 
         return $this;
     }

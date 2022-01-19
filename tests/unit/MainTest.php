@@ -603,7 +603,7 @@ class MainTest extends Unit
     {
         $graph = new Graph(
             [1 => 11, 2 => 22, 3 => 33, 4 => 44, 5 => 55],
-            [[1, 2], [2, 3], [3, 4], [3, 5], [1, 5]]
+            [[1, 2, 'a'], [2, 3, 'a'], [3, 4, 'a'], [3, 5, 'a'], [1, 5, 'a']]
         );
 
         $this->assertCount(5, $graph);
@@ -615,47 +615,49 @@ class MainTest extends Unit
             $this->assertEquals(GraphException::STATUS_ID_NOT_EXIST, $e->getCode());
         }
 
-        $this->assertEquals([], $graph->getItem(1)->getPrevItemIds());
-        $this->assertEquals([2, 5], $graph->getItem(1)->getNextItemIds());
+        $this->assertEquals([], $graph->getItem(1)->getPrevItemsMap());
+        $this->assertEquals([2 => 'a', 5 => 'a'], $graph->getItem(1)->getNextItemsMap());
 
-        $this->assertEquals([1], $graph->getItem(2)->getPrevItemIds());
-        $this->assertEquals([3], $graph->getItem(2)->getNextItemIds());
+        $this->assertEquals([1 => 'a'], $graph->getItem(2)->getPrevItemsMap());
+        $this->assertEquals([3 => 'a'], $graph->getItem(2)->getNextItemsMap());
 
-        $this->assertEquals([2], $graph->getItem(3)->getPrevItemIds());
-        $this->assertEquals([4, 5], $graph->getItem(3)->getNextItemIds());
+        $this->assertEquals([2 => 'a'], $graph->getItem(3)->getPrevItemsMap());
+        $this->assertEquals([4 => 'a', 5 => 'a'], $graph->getItem(3)->getNextItemsMap());
 
-        $this->assertEquals([3], $graph->getItem(4)->getPrevItemIds());
-        $this->assertEquals([], $graph->getItem(4)->getNextItemIds());
+        $this->assertEquals([3 => 'a'], $graph->getItem(4)->getPrevItemsMap());
+        $this->assertEquals([], $graph->getItem(4)->getNextItemsMap());
 
-        $this->assertEquals([3, 1], $graph->getItem(5)->getPrevItemIds());
-        $this->assertEquals([], $graph->getItem(5)->getNextItemIds());
+        $this->assertEquals([3 => 'a', 1 => 'a'], $graph->getItem(5)->getPrevItemsMap());
+        $this->assertEquals([], $graph->getItem(5)->getNextItemsMap());
 
         $graph->insert(6, 66);
         $this->assertCount(6, $graph);
 
-        $graph->link(1, 6);
-        $graph->link(6, 5);
+        $graph->link(1, 6, 'b');
+        $graph->link(6, 5, 'b');
 
-        $this->assertEquals([], $graph->getItem(1)->getPrevItemIds());
-        $this->assertEquals([2, 5, 6], $graph->getItem(1)->getNextItemIds());
+        $this->assertEquals([], $graph->getItem(1)->getPrevItemsMap());
+        $this->assertEquals([2 => 'a', 5 => 'a', 6 => 'b'], $graph->getItem(1)->getNextItemsMap());
 
-        $this->assertEquals([1], $graph->getItem(2)->getPrevItemIds());
-        $this->assertEquals([3], $graph->getItem(2)->getNextItemIds());
+        $this->assertEquals([1 => 'a'], $graph->getItem(2)->getPrevItemsMap());
+        $this->assertEquals([3 => 'a'], $graph->getItem(2)->getNextItemsMap());
 
-        $this->assertEquals([2], $graph->getItem(3)->getPrevItemIds());
-        $this->assertEquals([4, 5], $graph->getItem(3)->getNextItemIds());
+        $this->assertEquals([2 => 'a'], $graph->getItem(3)->getPrevItemsMap());
+        $this->assertEquals([4 => 'a', 5 => 'a'], $graph->getItem(3)->getNextItemsMap());
 
-        $this->assertEquals([3], $graph->getItem(4)->getPrevItemIds());
-        $this->assertEquals([], $graph->getItem(4)->getNextItemIds());
+        $this->assertEquals([3 => 'a'], $graph->getItem(4)->getPrevItemsMap());
+        $this->assertEquals([], $graph->getItem(4)->getNextItemsMap());
 
-        $this->assertEquals([3, 1, 6], $graph->getItem(5)->getPrevItemIds());
-        $this->assertEquals([], $graph->getItem(5)->getNextItemIds());
+        $this->assertEquals([3 => 'a', 1 => 'a', 6 => 'b'], $graph->getItem(5)->getPrevItemsMap());
+        $this->assertEquals([], $graph->getItem(5)->getNextItemsMap());
 
-        $this->assertEquals([1], $graph->getItem(6)->getPrevItemIds());
-        $this->assertEquals([5], $graph->getItem(6)->getNextItemIds());
+        $this->assertEquals([1 => 'b'], $graph->getItem(6)->getPrevItemsMap());
+        $this->assertEquals([5 => 'b'], $graph->getItem(6)->getNextItemsMap());
 
         $graph->unlink(1, 5);
         $graph->unlink(3, 5);
+        $graph->link(6, 3, 'b');
+        $graph->link(4, 5, 'b');
 
         try {
             $graph->unlink(3, 5);
@@ -664,23 +666,23 @@ class MainTest extends Unit
             $this->assertEquals(GraphException::STATUS_ID_NOT_EXIST, $e->getCode());
         }
 
-        $this->assertEquals([], $graph->getItem(1)->getPrevItemIds());
-        $this->assertEquals([2, 6], $graph->getItem(1)->getNextItemIds());
+        $this->assertEquals([], $graph->getItem(1)->getPrevItemsMap());
+        $this->assertEquals([2 => 'a', 6 => 'b'], $graph->getItem(1)->getNextItemsMap());
 
-        $this->assertEquals([1], $graph->getItem(2)->getPrevItemIds());
-        $this->assertEquals([3], $graph->getItem(2)->getNextItemIds());
+        $this->assertEquals([1 => 'a'], $graph->getItem(2)->getPrevItemsMap());
+        $this->assertEquals([3 => 'a'], $graph->getItem(2)->getNextItemsMap());
 
-        $this->assertEquals([2], $graph->getItem(3)->getPrevItemIds());
-        $this->assertEquals([4], $graph->getItem(3)->getNextItemIds());
+        $this->assertEquals([2 => 'a', 6 => 'b'], $graph->getItem(3)->getPrevItemsMap());
+        $this->assertEquals([4 => 'a'], $graph->getItem(3)->getNextItemsMap());
 
-        $this->assertEquals([3], $graph->getItem(4)->getPrevItemIds());
-        $this->assertEquals([], $graph->getItem(4)->getNextItemIds());
+        $this->assertEquals([3 => 'a'], $graph->getItem(4)->getPrevItemsMap());
+        $this->assertEquals([5 => 'b'], $graph->getItem(4)->getNextItemsMap());
 
-        $this->assertEquals([6], $graph->getItem(5)->getPrevItemIds());
-        $this->assertEquals([], $graph->getItem(5)->getNextItemIds());
+        $this->assertEquals([6 => 'b', 4 => 'b'], $graph->getItem(5)->getPrevItemsMap());
+        $this->assertEquals([], $graph->getItem(5)->getNextItemsMap());
 
-        $this->assertEquals([1], $graph->getItem(6)->getPrevItemIds());
-        $this->assertEquals([5], $graph->getItem(6)->getNextItemIds());
+        $this->assertEquals([1 => 'b'], $graph->getItem(6)->getPrevItemsMap());
+        $this->assertEquals([5 => 'b', 3 => 'b'], $graph->getItem(6)->getNextItemsMap());
     }
 
     /**

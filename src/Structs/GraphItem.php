@@ -18,27 +18,23 @@ class GraphItem
      */
     protected $data;
     /**
-     * @var GraphItem[] next items mapped by IDs
+     * @var GraphItemLink[] next items wrapped by link and mapped by item IDs
      */
-    protected array $nextItemsMap;
+    protected array $nextItemLinksMap = [];
     /**
-     * @var GraphItem[] previous items mapped by IDs
+     * @var GraphItemLink[] previous items wrapped by link and mapped by item IDs
      */
-    protected array $prevItemsMap;
+    protected array $prevItemLinksMap = [];
 
     /**
      * GraphItem constructor.
      * @param string $id item ID
      * @param mixed $data item data
-     * @param array $prevItems previous items list
-     * @param array $nextItems next items list
      */
-    public function __construct(string $id, $data, array $prevItems = [], array $nextItems = [])
+    public function __construct(string $id, $data)
     {
         $this->id = $id;
         $this->data = $data;
-        $this->setPrevItems($prevItems);
-        $this->setNextItems($nextItems);
     }
 
     /**
@@ -89,66 +85,87 @@ class GraphItem
      */
     public function getPrevItem(string $id): GraphItem
     {
-        if(!isset($this->prevItemsMap[$id])) {
+        return $this->getPrevItemLink($id)->getTarget();
+    }
+
+    /**
+     * Returns previous item link by ID
+     * @param string $id
+     * @return GraphItemLink
+     * @throws GraphException
+     */
+    public function getPrevItemLink(string $id): GraphItemLink
+    {
+        if(!isset($this->prevItemLinksMap[$id])) {
             throw new GraphException(
                 "ID '{$id}' not exists", GraphException::STATUS_ID_NOT_EXIST
             );
         }
 
-        return $this->prevItemsMap[$id];
+        return $this->prevItemLinksMap[$id];
     }
 
     /**
      * Returns previous items list
+     * @param string|null $type
      * @return GraphItem[]
      */
-    public function getPrevItems(): array
+    public function getPrevItems(?string $type = null): array
     {
-        return array_values($this->prevItemsMap);
-    }
+        $links = $this->getPrevItemLinks($type);
+        $result = [];
 
-    /**
-     * Returns previous items' IDs list
-     * @return string[]
-     */
-    public function getPrevItemIds(): array
-    {
-        return array_keys($this->prevItemsMap);
-    }
-
-    /**
-     * Returns previous items mapped by IDs
-     * @return GraphItem[]
-     */
-    public function getPrevItemsMap(): array
-    {
-        return $this->prevItemsMap;
-    }
-
-    /**
-     * Sets previous items
-     * @param GraphItem[] $prevItems previous items list
-     * @return self
-     */
-    public function setPrevItems(array $prevItems): self
-    {
-        $this->prevItemsMap = [];
-
-        foreach($prevItems as $prevItem) {
-            $this->prevItemsMap[$prevItem->getId()] = $prevItem;
+        foreach($links as $link) {
+            $result[] = $link->getTarget();
         }
 
-        return $this;
+        return $result;
     }
 
     /**
-     * Add link to previous item
+     * Returns previous item links list
+     * @param string|null $type
+     * @return GraphItemLink[]
+     */
+    public function getPrevItemLinks(?string $type = null): array
+    {
+        $result = [];
+
+        foreach($this->prevItemLinksMap as $link) {
+            if($type !== null && $type !== $link->getType()) {
+                continue;
+            }
+            $result[] = $link;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns previous items map ([itemId => linkType, ...])
+     * @return string[]
+     */
+    public function getPrevItemsMap(?string $type = null): array
+    {
+        $links = $this->getPrevItemLinks($type);
+        $result = [];
+
+        foreach($links as $link) {
+            $result[$link->getTarget()->getId()] = $link->getType();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Adds link to previous item
      * @param GraphItem $item item to link
+     * @param string $type
      * @return $this
      */
-    public function addPrevItem(GraphItem $item): self
+    public function addPrevItem(GraphItem $item, string $type): self
     {
-        $this->prevItemsMap[$item->getId()] = $item;
+        $this->prevItemLinksMap[$item->getId()] = new GraphItemLink($item, $type);
         return $this;
     }
 
@@ -161,7 +178,7 @@ class GraphItem
     public function deletePrevItem(string $itemId): self
     {
         $this->getPrevItem($itemId);
-        unset($this->prevItemsMap[$itemId]);
+        unset($this->prevItemLinksMap[$itemId]);
         return $this;
     }
 
@@ -173,66 +190,88 @@ class GraphItem
      */
     public function getNextItem(string $id): GraphItem
     {
-        if(!isset($this->nextItemsMap[$id])) {
+        return $this->getNextItemLink($id)->getTarget();
+    }
+
+    /**
+     * Returns next item link by ID
+     * @param string $id next item ID
+     * @return GraphItemLink
+     * @throws GraphException
+     */
+    public function getNextItemLink(string $id): GraphItemLink
+    {
+        if(!isset($this->nextItemLinksMap[$id])) {
             throw new GraphException(
                 "ID '{$id}' not exists", GraphException::STATUS_ID_NOT_EXIST
             );
         }
 
-        return $this->nextItemsMap[$id];
+        return $this->nextItemLinksMap[$id];
     }
 
     /**
      * Returns previous items list
+     * @param string|null $type
      * @return GraphItem[]
      */
-    public function getNextItems(): array
+    public function getNextItems(?string $type = null): array
     {
-        return array_values($this->nextItemsMap);
-    }
+        $links = $this->getNextItemLinks($type);
+        $result = [];
 
-    /**
-     * Returns previous items mapped by IDs
-     * @return GraphItem[]
-     */
-    public function getNextItemsMap(): array
-    {
-        return $this->nextItemsMap;
-    }
-
-    /**
-     * Returns previous items' IDs list
-     * @return string[]
-     */
-    public function getNextItemIds(): array
-    {
-        return array_keys($this->nextItemsMap);
-    }
-
-    /**
-     * Sets next items
-     * @param GraphItem[] $nextItems next items list
-     * @return self
-     */
-    public function setNextItems(array $nextItems): self
-    {
-        $this->nextItemsMap = [];
-
-        foreach($nextItems as $nextItem) {
-            $this->nextItemsMap[$nextItem->getId()] = $nextItem;
+        foreach($links as $link) {
+            $result[] = $link->getTarget();
         }
 
-        return $this;
+        return $result;
     }
 
     /**
-     * Deletes link to next item
+     * Returns next item links list
+     * @param string|null $type
+     * @return GraphItemLink[]
+     */
+    public function getNextItemLinks(?string $type = null): array
+    {
+        $result = [];
+
+        foreach($this->nextItemLinksMap as $link) {
+            if($type !== null && $type !== $link->getType()) {
+                continue;
+            }
+            $result[] = $link;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns next items map ([itemId => linkType, ...])
+     * @param string|null $type
+     * @return string[]
+     */
+    public function getNextItemsMap(?string $type = null): array
+    {
+        $links = $this->getNextItemLinks($type);
+        $result = [];
+
+        foreach($links as $link) {
+            $result[$link->getTarget()->getId()] = $link->getType();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Adds link to next item
      * @param GraphItem $item item to link
+     * @param string $type
      * @return $this
      */
-    public function addNextItem(GraphItem $item): self
+    public function addNextItem(GraphItem $item, string $type): self
     {
-        $this->nextItemsMap[$item->getId()] = $item;
+        $this->nextItemLinksMap[$item->getId()] = new GraphItemLink($item, $type);
         return $this;
     }
 
@@ -245,7 +284,7 @@ class GraphItem
     public function deleteNextItem(string $itemId): self
     {
         $this->getNextItem($itemId);
-        unset($this->nextItemsMap[$itemId]);
+        unset($this->nextItemLinksMap[$itemId]);
         return $this;
     }
 
@@ -258,8 +297,8 @@ class GraphItem
         return [
             'id' => $this->id,
             'data' => $this->data,
-            'previous' => $this->getPrevItemIds(),
-            'next' => $this->getNextItemIds(),
+            'previous' => $this->getPrevItemsMap(),
+            'next' => $this->getNextItemsMap(),
         ];
     }
 }
