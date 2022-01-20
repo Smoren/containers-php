@@ -5,7 +5,6 @@ namespace Smoren\Containers\Structs;
 
 
 use Smoren\Containers\Exceptions\GraphException;
-use Smoren\ExtendedExceptions\BaseException;
 
 class GraphItem
 {
@@ -129,13 +128,22 @@ class GraphItem
 
     /**
      * Returns previous items map ([linkType => [itemId, ...], ...])
-     * @return string[]
+     * @param array|null $typesOnly
+     * @param array|null $typesExclude
+     * @return string[][]
      */
-    public function getPrevItemsMap(): array
+    public function getPrevItemsMap(?array $typesOnly = null, ?array $typesExclude = null): array
     {
         $result = [];
 
         foreach($this->prevItemMap as $type => $itemMap) {
+            if(
+                $typesOnly !== null && !in_array($type, $typesOnly) ||
+                $typesExclude !== null && in_array($type, $typesExclude)
+            ) {
+                continue;
+            }
+
             $result[$type] = [];
             foreach($itemMap as $itemId => $item) {
                 $result[$type][] = $itemId;
@@ -243,13 +251,22 @@ class GraphItem
 
     /**
      * Returns next items map ([linkType => [itemId, ...], ...])
-     * @return string[]
+     * @param array|null $typesOnly
+     * @param array|null $typesExclude
+     * @return string[][]
      */
-    public function getNextItemsMap(): array
+    public function getNextItemsMap(?array $typesOnly = null, ?array $typesExclude = null): array
     {
         $result = [];
 
         foreach($this->nextItemMap as $type => $itemMap) {
+            if(
+                $typesOnly !== null && !in_array($type, $typesOnly) ||
+                $typesExclude !== null && in_array($type, $typesExclude)
+            ) {
+                continue;
+            }
+
             $result[$type] = [];
             foreach($itemMap as $itemId => $item) {
                 $result[$type][] = $itemId;

@@ -153,6 +153,46 @@ class Graph implements Countable
     }
 
     /**
+     * Get all traverse paths from item to left
+     * @param string $itemId item ID
+     * @param array|null $typesOnly list of types to use in traverse
+     * @param array|null $typesExclude list of types not to use in traverse
+     * @param callable|null $callback callback for every traverse link
+     * @return GraphTraversePath[]
+     * @throws GraphException
+     */
+    public function traverseLeft(
+        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null, ?callable $callback = null
+    ): array
+    {
+        return $this->makeTraversePathCollection(
+            $this->traverseRecursive(
+                'getPrevItemsMap', $itemId, $typesOnly, $typesExclude, $callback
+            )
+        );
+    }
+
+    /**
+     * Get all traverse paths from item to right
+     * @param string $itemId item ID
+     * @param array|null $typesOnly list of types to use in traverse
+     * @param array|null $typesExclude list of types not to use in traverse
+     * @param callable|null $callback callback for every traverse link
+     * @return GraphTraversePath[]
+     * @throws GraphException
+     */
+    public function traverseRight(
+        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null, ?callable $callback = null
+    ): array
+    {
+        return $this->makeTraversePathCollection(
+            $this->traverseRecursive(
+                'getNextItemsMap', $itemId, $typesOnly, $typesExclude, $callback
+            )
+        );
+    }
+
+    /**
      * Returns true if item with such ID exists in graph
      * @param string $id item ID
      * @return bool
@@ -226,5 +266,73 @@ class Graph implements Countable
     public function count(): int
     {
         return count($this->itemsMap);
+    }
+
+    /**
+     * Makes list of GraphTraversePaths by result of recursive traverse
+     * @param GraphLink[][] $traverseData input data
+     * @return GraphTraversePath[]
+     */
+    protected function makeTraversePathCollection(array $traverseData): array
+    {
+        $result = [];
+
+        foreach($traverseData as $links) {
+            $result[] = new GraphTraversePath($links);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Recursive method to find all traverse paths from some item to all dead ends
+     * @param string $getLinkedItemsMethodName method name for getting linked items
+     * @param string $itemId id of item to traverse from
+     * @param array|null $typesOnly list of types to use in traverse
+     * @param array|null $typesExclude list of types not to use in traverse
+     * @param callable|null $callback callback for every traverse link
+     * @param GraphItem|null $relatedItem related item from previous recursive iteration
+     * @param string|null $type link type with related item
+     * @param array $currentPath current state of traversed path
+     * @return GraphLink[][]
+     * @throws GraphException
+     */
+    protected function traverseRecursive(
+        string $getLinkedItemsMethodName, string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
+        ?callable $callback = null, GraphItem $relatedItem = null,
+        ?string $type = null, array $currentPath = []
+    ): array
+    {
+        $paths = [];
+        $item = $this->getItem($itemId);
+        $prevItemMap = $item->$getLinkedItemsMethodName($typesOnly, $typesExclude);
+
+        if($relatedItem !== null) {
+            $link = new GraphLink($relatedItem, $item, $type);
+
+            if($callback !== null) {
+                $callback($link, $currentPath);
+            }
+
+            $currentPath[] = $link;
+        }
+
+        if(count($prevItemMap)) {
+            foreach($prevItemMap as $type => $itemMap) {
+                foreach($itemMap as $itemId) {
+                    $paths = array_merge(
+                        $paths,
+                        $this->traverseRecursive(
+                            $getLinkedItemsMethodName, $itemId, $typesOnly, $typesExclude,
+                            $callback, $item, $type, $currentPath
+                        )
+                    );
+                }
+            }
+        } elseif(count($currentPath)) {
+            $paths[] = $currentPath;
+        }
+
+        return $paths;
     }
 }

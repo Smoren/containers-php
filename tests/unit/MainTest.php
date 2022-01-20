@@ -8,6 +8,7 @@ use Codeception\Test\Unit;
 use Exception;
 use Smoren\Containers\Exceptions\GraphException;
 use Smoren\Containers\Structs\Graph;
+use Smoren\Containers\Structs\GraphLink;
 use Smoren\ExtendedExceptions\BaseException;
 use Smoren\Containers\Exceptions\LinkedListException;
 use Smoren\Containers\Exceptions\MappedCollectionException;
@@ -680,7 +681,14 @@ class MainTest extends Unit
         $graph->link(4, 5, 'c');
 
         $this->assertEquals(['b' => [5], 'c' => [5]], $graph->getItem(4)->getNextItemsMap());
+        $this->assertEquals(['b' => [5], 'c' => [5]], $graph->getItem(4)->getNextItemsMap(['b', 'c']));
+        $this->assertEquals(['b' => [5]], $graph->getItem(4)->getNextItemsMap(['b']));
+        $this->assertEquals(['c' => [5]], $graph->getItem(4)->getNextItemsMap(['c']));
+
         $this->assertEquals(['b' => [6, 4], 'c' => [4]], $graph->getItem(5)->getPrevItemsMap());
+        $this->assertEquals(['b' => [6, 4], 'c' => [4]], $graph->getItem(5)->getPrevItemsMap(['b', 'c']));
+        $this->assertEquals(['b' => [6, 4]], $graph->getItem(5)->getPrevItemsMap(['b']));
+        $this->assertEquals(['c' => [4]], $graph->getItem(5)->getPrevItemsMap(['c']));
 
         $graph->unlink(4, 5);
 
@@ -714,6 +722,191 @@ class MainTest extends Unit
 
         $graph->clear();
         $this->assertCount(0, $graph);
+    }
+
+    /**
+     * @throws GraphException
+     */
+    public function testGraphTraverseLeft()
+    {
+        $graph = new Graph(
+            [1 => 11, 2 => 22, 3 => 33, 4 => 44, 5 => 55, 6 => 66],
+            [[1, 2, 'a'], [2, 3, 'a'], [3, 4, 'a'], [2, 5, 'b'], [5, 3, 'b'], [5, 6, 'c'], [6, 4, 'c']]
+        );
+
+        /* ============= */
+        /* TRAVERSE LEFT */
+        /* ============= */
+
+        $paths = $graph->traverseLeft(4);
+        $this->assertCount(3, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([4, 3, 5, 2, 1], $paths[1]->toArray(true));
+        $this->assertEquals([4, 6, 5, 2, 1], $paths[2]->toArray(true));
+        $this->assertEquals([1, 2, 5, 6, 4], $paths[2]->reverse()->toArray(true));
+
+        $paths = $graph->traverseLeft(4, ['a', 'b', 'c']);
+        $this->assertCount(3, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([4, 3, 5, 2, 1], $paths[1]->toArray(true));
+        $this->assertEquals([4, 6, 5, 2, 1], $paths[2]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, null, []);
+        $this->assertCount(3, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([4, 3, 5, 2, 1], $paths[1]->toArray(true));
+        $this->assertEquals([4, 6, 5, 2, 1], $paths[2]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, ['a']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, null, ['b', 'c']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, ['b']);
+        $this->assertCount(0, $paths);
+
+        $paths = $graph->traverseLeft(4, null, ['a', 'c']);
+        $this->assertCount(0, $paths);
+
+        $paths = $graph->traverseLeft(4, ['c']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([4, 6, 5], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, null, ['a', 'b']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([4, 6, 5], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, ['a', 'b']);
+        $this->assertCount(2, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([4, 3, 5, 2, 1], $paths[1]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, null, ['c']);
+        $this->assertCount(2, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([4, 3, 5, 2, 1], $paths[1]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, ['b', 'c']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([4, 6, 5, 2], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, null, ['a']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([4, 6, 5, 2], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, ['a', 'c']);
+        $this->assertCount(2, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([4, 6, 5], $paths[1]->toArray(true));
+
+        $paths = $graph->traverseLeft(4, null, ['b']);
+        $this->assertCount(2, $paths);
+        $this->assertEquals([4, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([4, 6, 5], $paths[1]->toArray(true));
+
+        $result = [];
+        $graph->traverseLeft(4, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
+            $data = $link->toArray(true);
+            $data[] = count($traveledPath);
+            $result[] = $data;
+        });
+
+        $this->assertEquals([
+            [4, 3, 'a', 0],
+            [3, 2, 'a', 1],
+            [2, 1, 'a', 2],
+            [3, 5, 'b', 1],
+            [5, 2, 'b', 2],
+            [2, 1, 'a', 3],
+            [4, 6, 'c', 0],
+            [6, 5, 'c', 1],
+            [5, 2, 'b', 2],
+            [2, 1, 'a', 3],
+        ], $result);
+
+        /* ============== */
+        /* TRAVERSE RIGHT */
+        /* ============== */
+
+        $paths = $graph->traverseRight(1);
+        $this->assertCount(3, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 5, 3, 4], $paths[1]->toArray(true));
+        $this->assertEquals([1, 2, 5, 6, 4], $paths[2]->toArray(true));
+
+        $paths = $graph->traverseRight(1, ['a', 'b', 'c']);
+        $this->assertCount(3, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 5, 3, 4], $paths[1]->toArray(true));
+        $this->assertEquals([1, 2, 5, 6, 4], $paths[2]->toArray(true));
+
+        $paths = $graph->traverseRight(1, null, []);
+        $this->assertCount(3, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 5, 3, 4], $paths[1]->toArray(true));
+        $this->assertEquals([1, 2, 5, 6, 4], $paths[2]->toArray(true));
+
+        $paths = $graph->traverseRight(1, ['a']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseRight(1, null, ['b', 'c']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseRight(1, ['b']);
+        $this->assertCount(0, $paths);
+
+        $paths = $graph->traverseRight(1, null, ['a', 'c']);
+        $this->assertCount(0, $paths);
+
+        $paths = $graph->traverseRight(1, ['c']);
+        $this->assertCount(0, $paths);
+
+        $paths = $graph->traverseRight(1, null, ['a', 'b']);
+        $this->assertCount(0, $paths);
+
+        $paths = $graph->traverseRight(1, ['a', 'b']);
+        $this->assertCount(2, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 5, 3, 4], $paths[1]->toArray(true));
+
+        $paths = $graph->traverseRight(1, null, ['c']);
+        $this->assertCount(2, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 5, 3, 4], $paths[1]->toArray(true));
+
+        $paths = $graph->traverseRight(1, ['a', 'c']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseRight(1, null, ['b']);
+        $this->assertCount(1, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+
+        $paths = $graph->traverseRight(1, ['b', 'c']);
+        $this->assertCount(0, $paths);
+
+        $result = [];
+        $graph->traverseRight(1, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
+            $data = $link->toArray(true);
+            $data[] = count($traveledPath);
+            $result[] = $data;
+        });
+
+        $this->assertEquals([
+            [1, 2, 'a', 0],
+            [2, 3, 'a', 1],
+            [3, 4, 'a', 2],
+            [2, 5, 'b', 1],
+            [5, 3, 'b', 2],
+            [3, 4, 'a', 3],
+            [5, 6, 'c', 2],
+            [6, 4, 'c', 3],
+        ], $result);
     }
 
     /**
