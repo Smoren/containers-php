@@ -300,8 +300,48 @@ print_r($pos->getData()); // output: ['a' => 1]
 var_dump($smll->count()); // output: 2
 print_r($smll->toArray()); // output: [-2 => ['a' => 2], -5 => ['a' => 5]]
 
-print_r($ll->popBack()); // [-5, ['a' => 5]]
-print_r($ll->popFront()); // [-2, ['a' => 2]]
+print_r($ll->popBack()); // output: [-5, ['a' => 5]]
+print_r($ll->popFront()); // output: [-2, ['a' => 2]]
 var_dump($smll->count()); // output: 0
 print_r($smll->toArray()); // output: []
+```
+
+### Graph
+
+Graph data structure with tools for traversing.
+
+```php
+use Smoren\Containers\Structs\Graph;
+
+$graph = new Graph(
+    [1 => 11, 2 => 22, 3 => 33, 4 => 44, 5 => 55, 6 => 66],
+    [[1, 2, 'a'], [2, 3, 'a'], [3, 4, 'a'], [2, 5, 'b'], [5, 3, 'b'], [5, 6, 'c'], [6, 4, 'c']]
+);
+
+$paths = $graph->traverseLeft(4);
+var_dump($paths); // output: 3
+var_dump($paths[0]->toArray(true)); // output: [4, 3, 2, 1]
+var_dump($paths[1]->toArray(true)); // output: [4, 3, 5, 2, 1]
+var_dump($paths[2]->toArray(true)); // output: [4, 6, 5, 2, 1]
+
+$paths = $graph->traverseRight(1);
+var_dump(3, $paths); // output: 3
+var_dump($paths[0]->toArray(true)); // output: [1, 2, 3, 4]
+var_dump($paths[1]->toArray(true)); // output: [1, 2, 5, 3, 4]
+var_dump($paths[2]->toArray(true)); // output: [1, 2, 5, 6, 4]
+
+$paths = $graph->traverseRight(1, ['a', 'b']);
+var_dump(2, $paths); // output: 
+var_dump($paths[0]->toArray(true)); // output: [1, 2, 3, 4]
+var_dump($paths[1]->toArray(true)); // output: [1, 2, 5, 3, 4]
+
+$graph->insert(7, 77);
+$graph->link(7, 1, 'a');
+
+$paths = $graph->traverseLeft(7);
+var_dump($paths); // output: 3
+var_dump($paths[0]->toArray(true)); // output: [4, 3, 2, 1, 7]
+var_dump($paths[1]->toArray(true)); // output: [4, 3, 5, 2, 1, 7]
+var_dump($paths[2]->toArray(true)); // output: [4, 6, 5, 2, 1, 7]
+var_dump($paths[2]->reverse()->toArray(true)); // output: [1, 2, 5, 6, 4, 7]
 ```

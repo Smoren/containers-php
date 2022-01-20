@@ -907,6 +907,21 @@ class MainTest extends Unit
             [5, 6, 'c', 2],
             [6, 4, 'c', 3],
         ], $result);
+
+        /* ================== */
+        /* REVERSE CLONE TEST */
+        /* ================== */
+
+        $paths = $graph->traverseRight(1, null, ['b']);
+        $path1 = $paths[0];
+        $this->assertEquals([1, 2, 3, 4], $path1->toArray(true));
+
+        $path1->reverse();
+        $this->assertEquals([4, 3, 2, 1], $path1->toArray(true));
+
+        $path2 = $path1->reverse(true);
+        $this->assertEquals([4, 3, 2, 1], $path1->toArray(true));
+        $this->assertEquals([1, 2, 3, 4], $path2->toArray(true));
     }
 
     /**
