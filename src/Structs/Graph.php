@@ -159,17 +159,19 @@ class Graph implements Countable, IteratorAggregate
      * @param string $itemId item ID
      * @param array|null $typesOnly list of types to use in traverse
      * @param array|null $typesExclude list of types not to use in traverse
+     * @param int|null $maxPathLength max path length
      * @param callable|null $callback callback for every traverse link
      * @return GraphTraversePath[]
      * @throws GraphException
      */
     public function traverseLeft(
-        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null, ?callable $callback = null
+        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
+        ?int $maxPathLength = null, ?callable $callback = null
     ): array
     {
         return $this->makeTraversePathCollection(
             $this->traverseRecursive(
-                'getPrevItemsMap', $itemId, $typesOnly, $typesExclude, $callback
+                'getPrevItemsMap', $itemId, $typesOnly, $typesExclude, $callback, $maxPathLength
             )
         );
     }
@@ -179,17 +181,19 @@ class Graph implements Countable, IteratorAggregate
      * @param string $itemId item ID
      * @param array|null $typesOnly list of types to use in traverse
      * @param array|null $typesExclude list of types not to use in traverse
+     * @param int|null $maxPathLength max path length
      * @param callable|null $callback callback for every traverse link
      * @return GraphTraversePath[]
      * @throws GraphException
      */
     public function traverseRight(
-        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null, ?callable $callback = null
+        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
+        ?int $maxPathLength = null, ?callable $callback = null
     ): array
     {
         return $this->makeTraversePathCollection(
             $this->traverseRecursive(
-                'getNextItemsMap', $itemId, $typesOnly, $typesExclude, $callback
+                'getNextItemsMap', $itemId, $typesOnly, $typesExclude, $callback, $maxPathLength
             )
         );
     }
@@ -293,6 +297,7 @@ class Graph implements Countable, IteratorAggregate
      * @param array|null $typesOnly list of types to use in traverse
      * @param array|null $typesExclude list of types not to use in traverse
      * @param callable|null $callback callback for every traverse link
+     * @param int|null $maxPathLength max path length
      * @param GraphItem|null $relatedItem related item from previous recursive iteration
      * @param string|null $type link type with related item
      * @param array $currentPath current state of traversed path
@@ -300,9 +305,10 @@ class Graph implements Countable, IteratorAggregate
      * @throws GraphException
      */
     protected function traverseRecursive(
-        string $getLinkedItemsMethodName, string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
-        ?callable $callback = null, GraphItem $relatedItem = null,
-        ?string $type = null, array $currentPath = []
+        string $getLinkedItemsMethodName, string $itemId,
+        ?array $typesOnly = null, ?array $typesExclude = null,
+        ?callable $callback = null, ?int $maxPathLength = null,
+        GraphItem $relatedItem = null, ?string $type = null, array $currentPath = []
     ): array
     {
         $paths = [];
@@ -319,14 +325,14 @@ class Graph implements Countable, IteratorAggregate
             $currentPath[] = $link;
         }
 
-        if(count($prevItemMap)) {
+        if(count($prevItemMap) && ($maxPathLength === null || count($currentPath) < $maxPathLength-1)) {
             foreach($prevItemMap as $type => $itemMap) {
                 foreach($itemMap as $itemId) {
                     $paths = array_merge(
                         $paths,
                         $this->traverseRecursive(
                             $getLinkedItemsMethodName, $itemId, $typesOnly, $typesExclude,
-                            $callback, $item, $type, $currentPath
+                            $callback, $maxPathLength, $item, $type, $currentPath
                         )
                     );
                 }

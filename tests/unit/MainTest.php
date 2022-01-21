@@ -808,7 +808,7 @@ class MainTest extends Unit
         $this->assertEquals([4, 6, 5], $paths[1]->toArray(true));
 
         $result = [];
-        $graph->traverseLeft(4, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
+        $graph->traverseLeft(4, null, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
             $data = $link->toArray(true);
             $data[] = count($traveledPath);
             $result[] = $data;
@@ -891,7 +891,7 @@ class MainTest extends Unit
         $this->assertCount(0, $paths);
 
         $result = [];
-        $graph->traverseRight(1, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
+        $graph->traverseRight(1, null, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
             $data = $link->toArray(true);
             $data[] = count($traveledPath);
             $result[] = $data;
@@ -907,6 +907,11 @@ class MainTest extends Unit
             [5, 6, 'c', 2],
             [6, 4, 'c', 3],
         ], $result);
+
+        $paths = $graph->traverseRight(1, ['a', 'b'], null, 3);
+        $this->assertCount(2, $paths);
+        $this->assertEquals([1, 2, 3], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 5], $paths[1]->toArray(true));
 
         /* ================== */
         /* REVERSE CLONE TEST */
