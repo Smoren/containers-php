@@ -45,9 +45,10 @@ class GraphTraversePath implements IteratorAggregate, Countable
     /**
      * Reverse path
      * @param bool $clone need clone object
+     * @param bool $cloneItems need clone items
      * @return GraphTraversePath
      */
-    public function reverse(bool $clone = false): self
+    public function reverse(bool $clone = false, bool $cloneItems = false): self
     {
         if($clone) {
             $path = clone $this;
@@ -58,7 +59,7 @@ class GraphTraversePath implements IteratorAggregate, Countable
         $path->links = array_reverse($path->links);
 
         foreach($path->links as $link) {
-            $link->swap();
+            $link->swap($cloneItems);
         }
 
         return $path;

@@ -34,12 +34,13 @@ class GraphLink
 
     /**
      * Swaps left and right items
+     * @param bool $clone need clone items
      * @return $this
      */
-    public function swap(): self
+    public function swap(bool $clone = false): self
     {
-        $lhs = $this->leftItem;
-        $rhs = $this->rightItem;
+        $lhs = $clone ? clone $this->leftItem : $this->leftItem;
+        $rhs = $clone ? clone $this->rightItem : $this->rightItem;
 
         $this->leftItem = $rhs;
         $this->rightItem = $lhs;
