@@ -4,10 +4,12 @@
 namespace Smoren\Containers\Structs;
 
 
+use ArrayIterator;
 use Countable;
+use IteratorAggregate;
 use Smoren\Containers\Exceptions\GraphException;
 
-class Graph implements Countable
+class Graph implements Countable, IteratorAggregate
 {
     /**
      * @var GraphItem[]
@@ -334,5 +336,14 @@ class Graph implements Countable
         }
 
         return $paths;
+    }
+
+    /**
+     * @inheritDoc
+     * @return ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->itemsMap);
     }
 }
