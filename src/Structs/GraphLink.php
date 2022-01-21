@@ -73,6 +73,18 @@ class GraphLink
     }
 
     /**
+     * Clones items
+     * @return $this
+     */
+    public function cloneItems(): self
+    {
+        $this->leftItem = clone $this->leftItem;
+        $this->rightItem = clone $this->rightItem;
+
+        return $this;
+    }
+
+    /**
      * Representates as array
      * @param bool $itemIdsOnly
      * @return array
