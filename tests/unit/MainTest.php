@@ -940,10 +940,34 @@ class MainTest extends Unit
         $this->assertEquals([1, 2, 5, 6, 4], $paths[4]->toArray(true));
 
         $paths = $graph->traverseLeft(4);
-        $this->assertCount(3, $paths);
+        $this->assertCount(4, $paths);
         $this->assertEquals([4, 3, 2, 1, 3], $paths[0]->toArray(true));
         $this->assertEquals([4, 3, 5, 2, 1, 3], $paths[1]->toArray(true));
         $this->assertEquals([4, 6, 5, 2, 1, 3, 2], $paths[2]->toArray(true));
+        $this->assertEquals([4, 6, 5, 2, 1, 3, 5], $paths[3]->toArray(true));
+
+        $graph = new Graph(
+            [1 => 11, 2 => 22, 3 => 33],
+            [[1, 2, 'a'], [2, 3, 'a'], [3, 1, 'a'], [3, 2, 'a'], [2, 1, 'a'], [1, 3, 'a']]
+        );
+
+        $paths = $graph->traverseRight(1);
+        $this->assertCount(6, $paths);
+        $this->assertEquals([1, 2, 3, 1], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 3, 2], $paths[1]->toArray(true));
+        $this->assertEquals([1, 2, 1], $paths[2]->toArray(true));
+        $this->assertEquals([1, 3, 1], $paths[3]->toArray(true));
+        $this->assertEquals([1, 3, 2, 3], $paths[4]->toArray(true));
+        $this->assertEquals([1, 3, 2, 1], $paths[5]->toArray(true));
+
+        $paths = $graph->traverseLeft(1);
+        $this->assertCount(6, $paths);
+        $this->assertEquals([1, 3, 2, 1], $paths[0]->toArray(true));
+        $this->assertEquals([1, 3, 2, 3], $paths[1]->toArray(true));
+        $this->assertEquals([1, 3, 1], $paths[2]->toArray(true));
+        $this->assertEquals([1, 2, 1], $paths[3]->toArray(true));
+        $this->assertEquals([1, 2, 3, 2], $paths[4]->toArray(true));
+        $this->assertEquals([1, 2, 3, 1], $paths[5]->toArray(true));
     }
 
     /**

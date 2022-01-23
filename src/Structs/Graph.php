@@ -327,20 +327,18 @@ class Graph implements Countable, IteratorAggregate
                 $callback($link, $currentPath);
             }
 
-            $currentPath[$relatedItem->getId()] = $link;
+            if($stopOnLoop && isset($currentPath[$item->getId()])) {
+                $currentPath[] = $link;
+                $paths[] = array_values($currentPath);
+                return $paths;
+            } else {
+                $currentPath[$relatedItem->getId()] = $link;
+            }
         }
 
         if(count($prevItemMap) && ($maxPathLength === null || count($currentPath) < $maxPathLength-1)) {
             foreach($prevItemMap as $type => $itemMap) {
                 foreach($itemMap as $itemId) {
-                    if(isset($currentPath[$itemId])) {
-                        if(count($currentPath)) {
-                            $currentPath[] = new GraphLink($item, $this->getItem($itemId), $type);
-                            $paths[] = array_values($currentPath);
-                        }
-                        return $paths;
-                    }
-
                     $paths = array_merge(
                         $paths,
                         $this->traverseRecursive(
