@@ -808,7 +808,7 @@ class MainTest extends Unit
         $this->assertEquals([4, 6, 5], $paths[1]->toArray(true));
 
         $result = [];
-        $graph->traverseLeft(4, null, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
+        $graph->traverseLeft(4, null, null, null, true, function(GraphLink $link, array $traveledPath) use (&$result) {
             $data = $link->toArray(true);
             $data[] = count($traveledPath);
             $result[] = $data;
@@ -891,7 +891,7 @@ class MainTest extends Unit
         $this->assertCount(0, $paths);
 
         $result = [];
-        $graph->traverseRight(1, null, null, null, function(GraphLink $link, array $traveledPath) use (&$result) {
+        $graph->traverseRight(1, null, null, null, true, function(GraphLink $link, array $traveledPath) use (&$result) {
             $data = $link->toArray(true);
             $data[] = count($traveledPath);
             $result[] = $data;
@@ -927,6 +927,23 @@ class MainTest extends Unit
         $path2 = $path1->reverse(true);
         $this->assertEquals([4, 3, 2, 1], $path1->toArray(true));
         $this->assertEquals([1, 2, 3, 4], $path2->toArray(true));
+
+        // loop test
+        $graph->link(3, 1, 'a');
+
+        $paths = $graph->traverseRight(1);
+        $this->assertCount(5, $paths);
+        $this->assertEquals([1, 2, 3, 4], $paths[0]->toArray(true));
+        $this->assertEquals([1, 2, 3, 1], $paths[1]->toArray(true));
+        $this->assertEquals([1, 2, 5, 3, 4], $paths[2]->toArray(true));
+        $this->assertEquals([1, 2, 5, 3, 1], $paths[3]->toArray(true));
+        $this->assertEquals([1, 2, 5, 6, 4], $paths[4]->toArray(true));
+
+        $paths = $graph->traverseLeft(4);
+        $this->assertCount(3, $paths);
+        $this->assertEquals([4, 3, 2, 1, 3], $paths[0]->toArray(true));
+        $this->assertEquals([4, 3, 5, 2, 1, 3], $paths[1]->toArray(true));
+        $this->assertEquals([4, 6, 5, 2, 1, 3, 2], $paths[2]->toArray(true));
     }
 
     /**

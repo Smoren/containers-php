@@ -85,6 +85,14 @@ class GraphLink
     }
 
     /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return "{$this->leftItem->getId()}_{$this->rightItem->getId()}";
+    }
+
+    /**
      * Representates as array
      * @param bool $itemIdsOnly
      * @return array

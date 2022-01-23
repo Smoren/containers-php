@@ -7,6 +7,7 @@ namespace Smoren\Containers\Structs;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use phpDocumentor\Reflection\DocBlock\Tags\Link;
 use Smoren\Containers\Exceptions\GraphException;
 
 class Graph implements Countable, IteratorAggregate
@@ -160,18 +161,20 @@ class Graph implements Countable, IteratorAggregate
      * @param array|null $typesOnly list of types to use in traverse
      * @param array|null $typesExclude list of types not to use in traverse
      * @param int|null $maxPathLength max path length
+     * @param bool $stopOnLoop stop on loop
      * @param callable|null $callback callback for every traverse link
      * @return GraphTraversePath[]
      * @throws GraphException
      */
     public function traverseLeft(
         string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
-        ?int $maxPathLength = null, ?callable $callback = null
+        ?int $maxPathLength = null, bool $stopOnLoop = true, ?callable $callback = null
     ): array
     {
         return $this->makeTraversePathCollection(
             $this->traverseRecursive(
-                'getPrevItemsMap', $itemId, $typesOnly, $typesExclude, $callback, $maxPathLength
+                'getPrevItemsMap', $itemId, $typesOnly, $typesExclude,
+                $callback, $maxPathLength, $stopOnLoop
             )
         );
     }
@@ -182,18 +185,20 @@ class Graph implements Countable, IteratorAggregate
      * @param array|null $typesOnly list of types to use in traverse
      * @param array|null $typesExclude list of types not to use in traverse
      * @param int|null $maxPathLength max path length
+     * @param bool $stopOnLoop stop on loop
      * @param callable|null $callback callback for every traverse link
      * @return GraphTraversePath[]
      * @throws GraphException
      */
     public function traverseRight(
         string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
-        ?int $maxPathLength = null, ?callable $callback = null
+        ?int $maxPathLength = null, bool $stopOnLoop = true, ?callable $callback = null
     ): array
     {
         return $this->makeTraversePathCollection(
             $this->traverseRecursive(
-                'getNextItemsMap', $itemId, $typesOnly, $typesExclude, $callback, $maxPathLength
+                'getNextItemsMap', $itemId, $typesOnly, $typesExclude, $callback,
+                $maxPathLength, $stopOnLoop
             )
         );
     }
@@ -307,7 +312,7 @@ class Graph implements Countable, IteratorAggregate
     protected function traverseRecursive(
         string $getLinkedItemsMethodName, string $itemId,
         ?array $typesOnly = null, ?array $typesExclude = null,
-        ?callable $callback = null, ?int $maxPathLength = null,
+        ?callable $callback = null, ?int $maxPathLength = null, bool $stopOnLoop = true,
         GraphItem $relatedItem = null, ?string $type = null, array $currentPath = []
     ): array
     {
@@ -322,23 +327,31 @@ class Graph implements Countable, IteratorAggregate
                 $callback($link, $currentPath);
             }
 
-            $currentPath[] = $link;
+            $currentPath[$relatedItem->getId()] = $link;
         }
 
         if(count($prevItemMap) && ($maxPathLength === null || count($currentPath) < $maxPathLength-1)) {
             foreach($prevItemMap as $type => $itemMap) {
                 foreach($itemMap as $itemId) {
+                    if(isset($currentPath[$itemId])) {
+                        if(count($currentPath)) {
+                            $currentPath[] = new GraphLink($item, $this->getItem($itemId), $type);
+                            $paths[] = array_values($currentPath);
+                        }
+                        return $paths;
+                    }
+
                     $paths = array_merge(
                         $paths,
                         $this->traverseRecursive(
                             $getLinkedItemsMethodName, $itemId, $typesOnly, $typesExclude,
-                            $callback, $maxPathLength, $item, $type, $currentPath
+                            $callback, $maxPathLength, $stopOnLoop, $item, $type, $currentPath
                         )
                     );
                 }
             }
         } elseif(count($currentPath)) {
-            $paths[] = $currentPath;
+            $paths[] = array_values($currentPath);
         }
 
         return $paths;
