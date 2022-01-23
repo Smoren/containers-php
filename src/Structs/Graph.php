@@ -7,7 +7,6 @@ namespace Smoren\Containers\Structs;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use phpDocumentor\Reflection\DocBlock\Tags\Link;
 use Smoren\Containers\Exceptions\GraphException;
 
 class Graph implements Countable, IteratorAggregate
