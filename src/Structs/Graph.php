@@ -155,7 +155,7 @@ class Graph implements Countable, IteratorAggregate
     }
 
     /**
-     * Get all traverse paths from item to left
+     * Get all traverse paths from item to backward
      * @param string $itemId item ID
      * @param array|null $typesOnly list of types to use in traverse
      * @param array|null $typesExclude list of types not to use in traverse
@@ -165,7 +165,7 @@ class Graph implements Countable, IteratorAggregate
      * @return GraphTraversePath[]
      * @throws GraphException
      */
-    public function traverseLeft(
+    public function traverseBackward(
         string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
         ?int $maxPathLength = null, bool $stopOnLoop = true, ?callable $callback = null
     ): array
@@ -179,7 +179,7 @@ class Graph implements Countable, IteratorAggregate
     }
 
     /**
-     * Get all traverse paths from item to right
+     * Get all traverse paths from item to forward
      * @param string $itemId item ID
      * @param array|null $typesOnly list of types to use in traverse
      * @param array|null $typesExclude list of types not to use in traverse
@@ -189,7 +189,7 @@ class Graph implements Countable, IteratorAggregate
      * @return GraphTraversePath[]
      * @throws GraphException
      */
-    public function traverseRight(
+    public function traverseForward(
         string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
         ?int $maxPathLength = null, bool $stopOnLoop = true, ?callable $callback = null
     ): array
