@@ -1,4 +1,11 @@
 # Data containers
+
+![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/smoren/containers)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Smoren/containers-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Smoren/containers-php/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Smoren/containers-php/badge.svg?branch=master)](https://coveralls.io/github/Smoren/containers-php?branch=master)
+![Build and test](https://github.com/Smoren/containers-php/actions/workflows/test_master.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Abstract data containers and structures for PHP
 
 ### How to install as dependency to your project

@@ -3,3 +3,4 @@ vendor
 composer.lock
 tests/_support
 tests/_output
+build
