@@ -67,7 +67,7 @@ class GraphTraversePath implements IteratorAggregate, Countable
      * @inheritDoc
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->links);
     }
@@ -75,7 +75,7 @@ class GraphTraversePath implements IteratorAggregate, Countable
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
         return count($this->links);
     }
