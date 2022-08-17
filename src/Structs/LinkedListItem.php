@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
 
 /**
@@ -30,7 +29,7 @@ class LinkedListItem
      * @param mixed $data data value
      * @param LinkedListItem|null $prev previous element position
      * @param LinkedListItem|null $next next element position
-     * @param null $extra extra data
+     * @param mixed $extra extra data
      */
     public function __construct($data, ?LinkedListItem $prev, ?LinkedListItem $next, $extra = null)
     {

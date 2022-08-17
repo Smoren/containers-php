@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
-
 
 use Closure;
 use Countable;
@@ -18,7 +16,7 @@ abstract class SortedLinkedList implements IteratorAggregate, Countable
      */
     protected LinkedList $list;
     /**
-     * @var Closure|callable comparator
+     * @var Closure comparator
      */
     protected Closure $comparator;
 

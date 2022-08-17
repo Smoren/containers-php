@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
-
 
 use ArrayIterator;
 use Countable;
@@ -86,7 +84,7 @@ class MappedCollection implements IteratorAggregate, Countable
     /**
      * Returns element by ID
      * @param string $id element ID
-     * @param null $default default value if element is not found
+     * @param mixed $default default value if element is not found
      * @return mixed data value of element
      * @throws MappedCollectionException
      */
@@ -125,7 +123,8 @@ class MappedCollection implements IteratorAggregate, Countable
     {
         if(!$this->exist($id)) {
             throw new MappedCollectionException(
-                "ID '{$id}' not exists", MappedCollectionException::STATUS_ID_NOT_EXIST
+                "ID '{$id}' not exists",
+                MappedCollectionException::STATUS_ID_NOT_EXIST
             );
         }
         return $this;
@@ -141,7 +140,8 @@ class MappedCollection implements IteratorAggregate, Countable
     {
         if($this->exist($id)) {
             throw new MappedCollectionException(
-                "ID '{$id}' exists", MappedCollectionException::STATUS_ID_EXIST
+                "ID '{$id}' exists",
+                MappedCollectionException::STATUS_ID_EXIST
             );
         }
         return $this;

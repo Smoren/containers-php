@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
 
 use Countable;
@@ -48,9 +47,10 @@ class MappedLinkedList implements IteratorAggregate, Countable
      * @throws MappedLinkedListException|MappedCollectionException
      */
     public function __construct(
-        array $inputMap = [], ?LinkedList $listObject = null, ?MappedCollection $positionMap = null
-    )
-    {
+        array $inputMap = [],
+        ?LinkedList $listObject = null,
+        ?MappedCollection $positionMap = null
+    ) {
         $this->list = $listObject ?? new LinkedList();
         $this->positionsMap = $positionMap ?? new MappedCollection();
 
@@ -293,7 +293,8 @@ class MappedLinkedList implements IteratorAggregate, Countable
     {
         if(!$this->exist($id)) {
             throw new MappedLinkedListException(
-                "ID '{$id}' not exists", MappedLinkedListException::STATUS_ID_NOT_EXIST
+                "ID '{$id}' not exists",
+                MappedLinkedListException::STATUS_ID_NOT_EXIST
             );
         }
         return $this;
@@ -309,7 +310,8 @@ class MappedLinkedList implements IteratorAggregate, Countable
     {
         if($this->exist($id)) {
             throw new MappedLinkedListException(
-                "ID '{$id}' exists", MappedLinkedListException::STATUS_ID_EXIST
+                "ID '{$id}' exists",
+                MappedLinkedListException::STATUS_ID_EXIST
             );
         }
         return $this;
@@ -324,7 +326,8 @@ class MappedLinkedList implements IteratorAggregate, Countable
     {
         if(!$this->count()) {
             throw new MappedLinkedListException(
-                "collection is empty", MappedLinkedListException::STATUS_EMPTY
+                "collection is empty",
+                MappedLinkedListException::STATUS_EMPTY
             );
         }
         return $this;

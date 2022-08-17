@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
-
 
 use Closure;
 use Countable;
@@ -23,7 +21,7 @@ class SortedMappedLinkedList implements IteratorAggregate, Countable
      */
     protected MappedLinkedList $list;
     /**
-     * @var Closure|callable comparator
+     * @var Closure comparator
      */
     protected Closure $comparator;
 
@@ -197,7 +195,7 @@ class SortedMappedLinkedList implements IteratorAggregate, Countable
      * Returns position max element which is less than argument (using comparator)
      * @param string $id element ID
      * @param mixed $data element data value
-     * @return LinkedListItem|null
+     * @return string|null
      * @throws MappedLinkedListException|MappedCollectionException
      */
     protected function findLeftPosition(string $id, $data): ?string

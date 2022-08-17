@@ -8,3 +8,11 @@ paths:
 settings:
   memory_limit: 1024M
   colors: true
+coverage:
+  enabled: true
+  show_uncovered: false
+  include:
+    - src/*
+  exclude:
+    - vendor/*
+    - tests/*

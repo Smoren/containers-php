@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
-
 
 use ArrayIterator;
 use Countable;

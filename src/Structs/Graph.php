@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
-
 
 use ArrayIterator;
 use Countable;
@@ -113,7 +111,7 @@ class Graph implements Countable, IteratorAggregate
     /**
      * Returns item data by ID
      * @param string $id item ID
-     * @param null $default default value if item is not found
+     * @param mixed $default default value if item is not found
      * @return mixed data value of item
      * @throws GraphException
      */
@@ -135,8 +133,8 @@ class Graph implements Countable, IteratorAggregate
     /**
      * Returns item by ID
      * @param string $id item ID
-     * @param null $default default value if item is not found
-     * @return mixed data value of item
+     * @param mixed $default default value if item is not found
+     * @return GraphItem data item
      * @throws GraphException
      */
     public function getItem(string $id, $default = null): GraphItem
@@ -166,14 +164,22 @@ class Graph implements Countable, IteratorAggregate
      * @throws GraphException
      */
     public function traverseBackward(
-        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
-        ?int $maxPathLength = null, bool $stopOnLoop = true, ?callable $callback = null
-    ): array
-    {
+        string $itemId,
+        ?array $typesOnly = null,
+        ?array $typesExclude = null,
+        ?int $maxPathLength = null,
+        bool $stopOnLoop = true,
+        ?callable $callback = null
+    ): array {
         return $this->makeTraversePathCollection(
             $this->traverseRecursive(
-                'getPrevItemsMap', $itemId, $typesOnly, $typesExclude,
-                $callback, $maxPathLength, $stopOnLoop
+                'getPrevItemsMap',
+                $itemId,
+                $typesOnly,
+                $typesExclude,
+                $callback,
+                $maxPathLength,
+                $stopOnLoop
             )
         );
     }
@@ -190,14 +196,22 @@ class Graph implements Countable, IteratorAggregate
      * @throws GraphException
      */
     public function traverseForward(
-        string $itemId, ?array $typesOnly = null, ?array $typesExclude = null,
-        ?int $maxPathLength = null, bool $stopOnLoop = true, ?callable $callback = null
-    ): array
-    {
+        string $itemId,
+        ?array $typesOnly = null,
+        ?array $typesExclude = null,
+        ?int $maxPathLength = null,
+        bool $stopOnLoop = true,
+        ?callable $callback = null
+    ): array {
         return $this->makeTraversePathCollection(
             $this->traverseRecursive(
-                'getNextItemsMap', $itemId, $typesOnly, $typesExclude, $callback,
-                $maxPathLength, $stopOnLoop
+                'getNextItemsMap',
+                $itemId,
+                $typesOnly,
+                $typesExclude,
+                $callback,
+                $maxPathLength,
+                $stopOnLoop
             )
         );
     }
@@ -222,7 +236,8 @@ class Graph implements Countable, IteratorAggregate
     {
         if(!$this->exist($id)) {
             throw new GraphException(
-                "ID '{$id}' not exists", GraphException::STATUS_ID_NOT_EXIST
+                "ID '{$id}' not exists",
+                GraphException::STATUS_ID_NOT_EXIST
             );
         }
         return $this;
@@ -238,7 +253,8 @@ class Graph implements Countable, IteratorAggregate
     {
         if($this->exist($id)) {
             throw new GraphException(
-                "ID '{$id}' exists", GraphException::STATUS_ID_EXIST
+                "ID '{$id}' exists",
+                GraphException::STATUS_ID_EXIST
             );
         }
         return $this;
@@ -255,7 +271,7 @@ class Graph implements Countable, IteratorAggregate
     }
 
     /**
-     * Representates graph as array
+     * Represents graph as array
      * @return array
      */
     public function toArray(): array
@@ -309,12 +325,17 @@ class Graph implements Countable, IteratorAggregate
      * @throws GraphException
      */
     protected function traverseRecursive(
-        string $getLinkedItemsMethodName, string $itemId,
-        ?array $typesOnly = null, ?array $typesExclude = null,
-        ?callable $callback = null, ?int $maxPathLength = null, bool $stopOnLoop = true,
-        GraphItem $relatedItem = null, ?string $type = null, array $currentPath = []
-    ): array
-    {
+        string $getLinkedItemsMethodName,
+        string $itemId,
+        ?array $typesOnly = null,
+        ?array $typesExclude = null,
+        ?callable $callback = null,
+        ?int $maxPathLength = null,
+        bool $stopOnLoop = true,
+        GraphItem $relatedItem = null,
+        ?string $type = null,
+        array $currentPath = []
+    ): array {
         $paths = [];
         $item = $this->getItem($itemId);
         $prevItemMap = $item->$getLinkedItemsMethodName($typesOnly, $typesExclude);
@@ -341,8 +362,16 @@ class Graph implements Countable, IteratorAggregate
                     $paths = array_merge(
                         $paths,
                         $this->traverseRecursive(
-                            $getLinkedItemsMethodName, $itemId, $typesOnly, $typesExclude,
-                            $callback, $maxPathLength, $stopOnLoop, $item, $type, $currentPath
+                            $getLinkedItemsMethodName,
+                            $itemId,
+                            $typesOnly,
+                            $typesExclude,
+                            $callback,
+                            $maxPathLength,
+                            $stopOnLoop,
+                            $item,
+                            $type,
+                            $currentPath
                         )
                     );
                 }
@@ -358,7 +387,7 @@ class Graph implements Countable, IteratorAggregate
      * @inheritDoc
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->itemsMap);
     }

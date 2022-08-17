@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Containers\Structs;
-
 
 use Smoren\Containers\Exceptions\GraphException;
 
@@ -87,7 +85,8 @@ class GraphItem
     {
         if(!isset($this->prevItemMap[$type][$id])) {
             throw new GraphException(
-                "ID '{$id}' not exists", GraphException::STATUS_ID_NOT_EXIST
+                "ID '{$id}' not exists",
+                GraphException::STATUS_ID_NOT_EXIST
             );
         }
 
@@ -210,7 +209,8 @@ class GraphItem
     {
         if(!isset($this->nextItemMap[$type][$id])) {
             throw new GraphException(
-                "ID '{$id}' not exists", GraphException::STATUS_ID_NOT_EXIST
+                "ID '{$id}' not exists",
+                GraphException::STATUS_ID_NOT_EXIST
             );
         }
 
