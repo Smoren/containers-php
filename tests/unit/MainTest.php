@@ -7,6 +7,8 @@ use Codeception\Lib\Console\Output;
 use Codeception\Test\Unit;
 use Exception;
 use Smoren\Containers\Exceptions\GraphException;
+use Smoren\Containers\Structs\BinaryTree;
+use Smoren\Containers\Structs\BinaryTreeNode;
 use Smoren\Containers\Structs\Graph;
 use Smoren\Containers\Structs\GraphLink;
 use Smoren\ExtendedExceptions\BaseException;
@@ -1113,6 +1115,57 @@ class MainTest extends Unit
         $this->assertEquals(['a' => ['id' => 'a'], 'b' => ['id' => 'b']], $smllCopy->toArray());
     }
 
+    public function testBinaryTree()
+    {
+        $nonSortedArray = [5, 1, 10, 11, -100, -7, -10, 35, 99];
+        $sortedArray = $this->sortArray($nonSortedArray);
+
+        $bt = new BinaryTree($nonSortedArray);
+        $this->assertEquals($sortedArray, $bt->toArray());
+        $this->assertCount(9, $bt);
+
+        $bt->rotateRight();
+        $this->assertEquals($sortedArray, $bt->toArray());
+        $this->assertCount(9, $bt);
+
+        $bt->rotateRight();
+        $this->assertEquals($sortedArray, $bt->toArray());
+        $this->assertCount(9, $bt);
+
+        $bt->rotateLeft();
+        $this->assertEquals($sortedArray, $bt->toArray());
+        $this->assertCount(9, $bt);
+
+        $bt->rotateLeft();
+        $this->assertEquals($sortedArray, $bt->toArray());
+        $this->assertCount(9, $bt);
+
+        for($i=0; $i<100; ++$i) {
+            $bt->rotateRight();
+            $this->assertEquals($sortedArray, $bt->toArray());
+            $this->assertCount(9, $bt);
+        }
+
+        for($i=0; $i<100; ++$i) {
+            $bt->rotateLeft();
+            $this->assertEquals($sortedArray, $bt->toArray());
+            $this->assertCount(9, $bt);
+        }
+
+        $nonSortedArray = $this->createRandomArray(100);
+        $sortedArray = $this->sortArray($nonSortedArray);
+        $bt = new BinaryTree($nonSortedArray);
+        $this->assertEquals($sortedArray, $bt->toArray());
+        $this->assertCount(100, $bt);
+    }
+
+    protected function createRandomArray(int $len): array
+    {
+        $range = range(0, $len*10);
+        shuffle($range);
+        return array_slice($range, 0, $len);
+    }
+
     /**
      * @param array $source
      * @param string $columnName
@@ -1127,6 +1180,12 @@ class MainTest extends Unit
         }
 
         return $result;
+    }
+
+    protected function sortArray(array $input): array
+    {
+        sort($input);
+        return $input;
     }
 
     /**
