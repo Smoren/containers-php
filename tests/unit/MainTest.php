@@ -9,6 +9,7 @@ use Exception;
 use Smoren\Containers\Exceptions\GraphException;
 use Smoren\Containers\Structs\BinaryTree;
 use Smoren\Containers\Structs\BinaryTreeNode;
+use Smoren\Containers\Structs\DefaultArray;
 use Smoren\Containers\Structs\Graph;
 use Smoren\Containers\Structs\GraphLink;
 use Smoren\ExtendedExceptions\BaseException;
@@ -1157,6 +1158,19 @@ class MainTest extends Unit
         $bt = new BinaryTree($nonSortedArray);
         $this->assertEquals($sortedArray, $bt->toArray());
         $this->assertCount(100, $bt);
+    }
+
+    public function testDefaultArray()
+    {
+        $a = new DefaultArray([1, 2, 3, 'test' => 4], function($key) {
+            return "test {$key}";
+        });
+        $this->assertEquals(1, $a[0]);
+        $this->assertEquals(2, $a[1]);
+        $this->assertEquals(3, $a[2]);
+        $this->assertEquals(4, $a['test']);
+        $this->assertEquals('test 100', $a[100]);
+        $this->assertEquals('test nya', $a['nya']);
     }
 
     protected function createRandomArray(int $len): array
